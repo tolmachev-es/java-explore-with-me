@@ -3,7 +3,6 @@ package ru.practicum.server.models;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 

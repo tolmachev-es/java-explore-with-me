@@ -4,10 +4,10 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.server.models.ViewStats;
-import ru.practicum.server.repository.HitEntity;
 import ru.practicum.client.models.HitDto;
 import ru.practicum.client.models.ViewStatsDto;
+import ru.practicum.server.models.ViewStats;
+import ru.practicum.server.repository.HitEntity;
 
 @Mapper
 public interface StatMapper {

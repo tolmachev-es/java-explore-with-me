@@ -2,20 +2,25 @@ package ru.practicum.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.client.models.HitDto;
+import ru.practicum.client.models.ViewStatsDto;
 import ru.practicum.server.mappers.StatMapper;
 import ru.practicum.server.models.ViewStats;
 import ru.practicum.server.repository.HitEntity;
 import ru.practicum.server.repository.StatRepository;
-import ru.practicum.client.models.*;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
     private final StatRepository statRepository;
+
     @Override
     public void addStatistic(HitDto hitDto) {
         HitEntity hitEntity = StatMapper.STAT_MAPPER.hitToEntity(hitDto);
@@ -30,7 +35,7 @@ public class StatsServiceImpl implements StatsService {
 
     private List<ViewStats> toViewStatsList(List<Object[]> objects) {
         Map<String, ViewStats> allStats = new HashMap<>();
-        for (Object[] object: objects) {
+        for (Object[] object : objects) {
             String key = object[0].toString() + object[1].toString();
             if (allStats.containsKey(key)) {
                 allStats.get(key).getHits().put(object[2].toString(), Integer.parseInt(object[3].toString()));

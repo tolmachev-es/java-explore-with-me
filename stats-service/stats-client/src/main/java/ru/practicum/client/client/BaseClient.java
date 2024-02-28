@@ -15,6 +15,20 @@ public class BaseClient {
         this.template = template;
     }
 
+    private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response;
+        }
+
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
+
+        if (response.hasBody()) {
+            return responseBuilder.body(response.getBody());
+        }
+
+        return responseBuilder.build();
+    }
+
     protected <T> ResponseEntity<Object> post(String path, T body) {
         return makeAndSendRequest(HttpMethod.POST, path, null, body);
     }
@@ -37,20 +51,6 @@ public class BaseClient {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
         return prepareGatewayResponse(statsServerResponse);
-    }
-
-    private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response;
-        }
-
-        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-
-        if (response.hasBody()) {
-            return responseBuilder.body(response.getBody());
-        }
-
-        return responseBuilder.build();
     }
 
     private HttpHeaders addHttpHeaders() {

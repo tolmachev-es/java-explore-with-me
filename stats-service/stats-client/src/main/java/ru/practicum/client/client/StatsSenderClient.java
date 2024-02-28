@@ -22,7 +22,7 @@ import java.util.Map;
 public class StatsSenderClient extends BaseClient {
 
     @Autowired
-    public StatsSenderClient(@Value("${stats-server.address}")String serverUrl, RestTemplateBuilder builder) {
+    public StatsSenderClient(@Value("${stats-server.address}") String serverUrl, RestTemplateBuilder builder) {
         super(builder.
                 uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
