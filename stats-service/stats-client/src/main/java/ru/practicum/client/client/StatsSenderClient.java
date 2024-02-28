@@ -23,8 +23,8 @@ public class StatsSenderClient extends BaseClient {
 
     @Autowired
     public StatsSenderClient(@Value("${stats-server.address}") String serverUrl, RestTemplateBuilder builder) {
-        super(builder.
-                uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+        super(builder
+                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build()
         );
