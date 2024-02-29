@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping
 public class StatsController {
     private final StatsService service;
 
@@ -33,11 +32,12 @@ public class StatsController {
     List<ViewStatsDto> getStats(@RequestParam @NotNull String start,
                                 @RequestParam @NotNull String end,
                                 @RequestParam(required = false) List<String> uris,
-                                @RequestParam(defaultValue = "false") boolean unique) {
+                                @RequestParam(defaultValue = "false") String unique) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        boolean unic = Boolean.parseBoolean(unique);
         return service.getStats(LocalDateTime.parse(URLDecoder.decode(start, Charset.defaultCharset()), formatter),
                 LocalDateTime.parse((URLDecoder.decode(end, Charset.defaultCharset())), formatter),
                 uris,
-                unique);
+                unic);
     }
 }

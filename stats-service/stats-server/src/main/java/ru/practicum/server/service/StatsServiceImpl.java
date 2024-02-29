@@ -10,10 +10,7 @@ import ru.practicum.server.repository.HitEntity;
 import ru.practicum.server.repository.StatRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +54,12 @@ public class StatsServiceImpl implements StatsService {
         List<ViewStats> viewStats = toViewStatsList(objects);
         return viewStats.stream()
                 .map(view -> StatMapper.STAT_MAPPER.viewToDto(view, unique))
+                .sorted(new Comparator<ViewStatsDto>() {
+                    @Override
+                    public int compare(ViewStatsDto o1, ViewStatsDto o2) {
+                        return o2.getHits() - o1.getHits();
+                    }
+                })
                 .collect(Collectors.toList());
     }
 }
