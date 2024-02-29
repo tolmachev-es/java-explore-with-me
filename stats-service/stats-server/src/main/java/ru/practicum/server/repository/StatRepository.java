@@ -12,7 +12,7 @@ import java.util.List;
 public interface StatRepository extends JpaRepository<HitEntity, Long> {
     @Query("select e.uri, e.app, e.ip, count(e) as count " +
             "from HitEntity e where e.timestamp between :start and :end " +
-            "and (:uris is null or e.uri in :uris) " +
+            "and (:uris is null or e.uri like concat('%',:uris,'%')) " +
             "group by e.uri, e.app, e.ip")
     List<Object[]> findAllStatistic(LocalDateTime start, LocalDateTime end, List<String> uris);
 }

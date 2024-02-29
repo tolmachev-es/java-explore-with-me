@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping
 public class StatsController {
     private final StatsService service;
 
