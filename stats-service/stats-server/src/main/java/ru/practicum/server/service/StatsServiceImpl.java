@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import ru.practicum.client.models.HitDto;
 import ru.practicum.client.models.ViewStatsDto;
 import ru.practicum.server.mappers.StatMapper;
-import ru.practicum.server.models.ViewStats;
 import ru.practicum.server.repository.HitEntity;
 import ru.practicum.server.repository.StatRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
