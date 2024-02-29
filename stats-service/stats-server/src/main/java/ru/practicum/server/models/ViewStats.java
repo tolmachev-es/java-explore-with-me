@@ -3,7 +3,7 @@ package ru.practicum.server.models;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
 
 @Data
@@ -11,7 +11,7 @@ import java.util.Objects;
 public class ViewStats {
     private String app;
     private String uri;
-    private Map<String, Integer> hits;
+    private HashMap<String, Integer> hits;
 
     @Override
     public boolean equals(Object o) {

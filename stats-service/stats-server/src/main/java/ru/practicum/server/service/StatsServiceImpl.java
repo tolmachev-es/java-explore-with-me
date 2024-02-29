@@ -10,10 +10,7 @@ import ru.practicum.server.repository.HitEntity;
 import ru.practicum.server.repository.StatRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +26,18 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        return toViewStatsDtoList(statRepository.findAllStatistic(start, end, uris), unique);
+        return statRepository.findAllStatistic(start, end, uris)
+                .stream()
+                .map(StatMapper.STAT_MAPPER::fromProjections)
+                .map(v -> StatMapper.STAT_MAPPER.viewToDto(v, unique))
+                .sorted(new Comparator<ViewStatsDto>() {
+                    @Override
+                    public int compare(ViewStatsDto o1, ViewStatsDto o2) {
+                        return o2.getHits() - o1.getHits();
+                    }
+                })
+                .collect(Collectors.toList());
+
     }
 
 
@@ -40,14 +48,10 @@ public class StatsServiceImpl implements StatsService {
             if (allStats.containsKey(key)) {
                 allStats.get(key).getHits().put(object[2].toString(), Integer.parseInt(object[3].toString()));
             } else {
-                Map<String, Integer> hits = new HashMap<>();
+                Map<String, Integer> hits = new HashMap<>() {{
+                    put("hi", 1);
+                }};
                 hits.put(object[2].toString(), Integer.parseInt(object[3].toString()));
-                ViewStats newViewStats = ViewStats.builder()
-                        .app(object[0].toString())
-                        .uri(object[1].toString())
-                        .hits(hits)
-                        .build();
-                allStats.put(key, newViewStats);
             }
         }
         return new ArrayList<>(allStats.values());
@@ -57,6 +61,12 @@ public class StatsServiceImpl implements StatsService {
         List<ViewStats> viewStats = toViewStatsList(objects);
         return viewStats.stream()
                 .map(view -> StatMapper.STAT_MAPPER.viewToDto(view, unique))
+                .sorted(new Comparator<ViewStatsDto>() {
+                    @Override
+                    public int compare(ViewStatsDto o1, ViewStatsDto o2) {
+                        return o2.getHits() - o1.getHits();
+                    }
+                })
                 .collect(Collectors.toList());
     }
 }
