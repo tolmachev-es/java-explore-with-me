@@ -1,0 +1,1 @@
+Template repository for stats-service project.
