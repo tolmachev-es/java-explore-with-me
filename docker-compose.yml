@@ -13,12 +13,24 @@ services:
 
   stats-db:
     image: postgres:14-alpine
-    container_name: stats_db
+    container_name: 'stats_db'
     ports:
       - "6541:5432"
     environment:
       - POSTGRES_DB=stat_db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - DB_HOST=localhost
+      - DB_PORT=5432
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: 'event_db'
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=event_db
+      - POSTGRES_USER=root1
+      - POSTGRES_PASSWORD=root1
       - DB_HOST=localhost
       - DB_PORT=5432

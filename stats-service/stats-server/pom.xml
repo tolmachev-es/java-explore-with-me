@@ -14,7 +14,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
 
-    <name>stats-serve</name>
+    <name>stats-server</name>
 
     <dependencies>
         <dependency>
