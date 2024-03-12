@@ -1,6 +1,8 @@
 package ru.practicum.server.repository.entities;
 
 import lombok.Data;
+import ru.practicum.server.enums.RequestStatusEnum;
+import ru.practicum.server.enums.StateEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ public class RequestEntity {
     @JoinColumn(name = "EVENT_ID", nullable = false)
     private EventEntity eventId;
     @Column(name = "CONFIRMED", nullable = false)
-    private Boolean confirmed;
+    private RequestStatusEnum confirmed;
     @Column(name = "CREATED", nullable = false)
     private LocalDateTime created;
 }

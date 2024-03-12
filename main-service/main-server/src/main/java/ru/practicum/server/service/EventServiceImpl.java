@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.dto.*;
+import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.IncorrectDateException;
 import ru.practicum.server.mappers.EventMapper;
@@ -21,6 +22,7 @@ import ru.practicum.server.repository.entities.RequestEntity;
 import ru.practicum.server.service.interfaces.EventService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,8 +89,30 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> changeStatusForEvent(EventRequestStatusUpdateDto requestStatusUpdateDto,
                                                   Long userId,
                                                   Long eventId) {
-
-        return null;
+        Event event = eventStorage.getById(eventId);
+        List<RequestEntity> resultList = new ArrayList<>();
+        if (!event.getOwner().getId().equals(userId)) {
+            throw new RuntimeException("Incorrect owner");
+        } else {
+            switch (requestStatusUpdateDto.getStatus()) {
+                case CONFIRMED:
+                    if (event.getRequestModeration()) {
+                        resultList = requestStorage.requestConfirmStatus(
+                                requestStatusUpdateDto.getRequestIds(),
+                                event.getParticipantLimit(),
+                                eventId);
+                    } else {
+                        resultList = requestStorage.getByIds(requestStatusUpdateDto.getRequestIds());
+                    }
+                    break;
+                case REJECTED:
+                    resultList = requestStorage.requestRejectStatus(requestStatusUpdateDto.getRequestIds());
+            }
+        }
+        List<ParticipationRequestDto> listToReturn = resultList.stream()
+                .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(listToReturn, HttpStatus.OK);
     }
 
     @Override
@@ -138,8 +162,8 @@ public class EventServiceImpl implements EventService {
         if (event.getParticipantLimit() > requestStorage.countGuest(eventId)) {
             throw new RuntimeException("Count exception");
         }
-        if (event.getRequestModeration().equals(false)) {
-            request.setConfirmed(true);
+        if (event.getRequestModeration().equals(false) && event.getParticipantLimit().equals(0)) {
+            request.setConfirmed(RequestStatusEnum.ALLOWS);
         }
         request.setCreated(LocalDateTime.now());
         ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER.fromRequestEntity(
