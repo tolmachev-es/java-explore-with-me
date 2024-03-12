@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.dto.*;
+import ru.practicum.server.models.FilterParam;
 
 @Service
 public interface EventService {
@@ -34,4 +35,7 @@ public interface EventService {
     ResponseEntity<?> getRequestByUser(Long userId);
 
     ResponseEntity<?> removeRequest(Long requestId, Long userId);
+    ResponseEntity<?> getEvents(FilterParam filterParam);
+
+    ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
 }

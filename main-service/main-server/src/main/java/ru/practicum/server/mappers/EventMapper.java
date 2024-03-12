@@ -55,4 +55,6 @@ public interface EventMapper {
     @Mapping(target = "requester", expression = "java(entity.getUserId().getId())")
     @Mapping(target = "state", expression = "java(entity.getEventId().getState())")
     ParticipationRequestDto fromRequestEntity(RequestEntity entity);
+
+    Event fromUpdateAdminEventRequest(UpdateEventAdminRequestDto updateEventAdminRequestDto);
 }

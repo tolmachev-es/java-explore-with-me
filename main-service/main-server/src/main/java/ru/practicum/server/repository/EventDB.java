@@ -2,7 +2,9 @@ package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import ru.practicum.server.dto.UpdateEventAdminRequestDto;
 import ru.practicum.server.enums.PrivateStateActionEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.AlreadyUseException;
@@ -11,6 +13,7 @@ import ru.practicum.server.exceptions.IncorrectRequestException;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.models.Event;
+import ru.practicum.server.models.FilterParam;
 import ru.practicum.server.repository.entities.EventEntity;
 
 import javax.validation.ConstraintViolationException;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.practicum.server.enums.PrivateStateActionEnum.CANCEL_REVIEW;
 
 @Component
 @RequiredArgsConstructor
@@ -51,7 +56,12 @@ public class EventDB {
     }
 
     public Event updateEvent(Event updateEvent, Long userId, Long eventId, PrivateStateActionEnum actionEnum) {
-        Optional<EventEntity> event = eventRepository.getEventEntitiesByOwnerIdAndId(userId, eventId);
+        Optional<EventEntity> event;
+        if (userId != null) {
+            event = eventRepository.getEventEntitiesByOwnerIdAndId(userId, eventId);
+        } else {
+            event = eventRepository.findById(eventId);
+        }
         if (event.isPresent()) {
             if (event.get().getState().equals(StateEnum.PUBLISHED)) {
                 throw new IncorrectRequestException("Event must not be published");
@@ -84,6 +94,17 @@ public class EventDB {
         }
     }
 
+    public List<Event> getEventsByFilter(FilterParam filterParam) {
+        Specification<EventEntity> specification = Specification
+                .where(EventSpecification.ownerSpecification(filterParam))
+                .and(EventSpecification.categorySpecification(filterParam))
+                .and(EventSpecification.statesSpecification(filterParam))
+                .and(EventSpecification.startSpecification(filterParam))
+                .and(EventSpecification.endSpecification(filterParam));
+        return eventRepository.findAll(specification, filterParam.getPageable()).toList()
+                .stream()
+                .map(EventMapper.EVENT_MAPPER::fromEventEntity).collect(Collectors.toList());
+    }
 
     private EventEntity setDifferentFields(EventEntity event, Event newEvent) {
         if (newEvent.getAnnotation() != null) {
@@ -116,4 +137,6 @@ public class EventDB {
         }
         return event;
     }
+
+
 }

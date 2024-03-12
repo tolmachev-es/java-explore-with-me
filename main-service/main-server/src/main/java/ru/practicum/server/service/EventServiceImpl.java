@@ -13,6 +13,7 @@ import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.mappers.UserMapper;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
+import ru.practicum.server.models.FilterParam;
 import ru.practicum.server.models.User;
 import ru.practicum.server.repository.CategoryDB;
 import ru.practicum.server.repository.EventDB;
@@ -184,6 +185,21 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> removeRequest(Long requestId, Long userId) {
         requestStorage.removeRequest(requestId, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<?> getEvents(FilterParam filterParam) {
+        List<Event> events = eventStorage.getEventsByFilter(filterParam);
+        List<EventFullDto> eventFullDtos = events.stream()
+                .map(EventMapper.EVENT_MAPPER::toEventFullDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(eventFullDtos, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto) {
+
+        return null;
     }
 
 }

@@ -41,14 +41,5 @@ public class AdminController {
         return null;
     }
 
-    @GetMapping("/events")
-    ResponseEntity<?> getEvents(@RequestParam(name = "users") List<Long> users,
-                                @RequestParam(name = "states") List<String> states,
-                                @RequestParam(name = "categories") List<Long> categories,
-                                @RequestParam(name = "rangeStart") LocalDateTime rangeStart,
-                                @RequestParam(name = "rangeEnd") LocalDateTime rangeEnd,
-                                @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        return null;
-    }
+
 }
