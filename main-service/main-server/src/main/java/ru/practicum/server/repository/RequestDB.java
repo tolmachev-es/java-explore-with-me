@@ -8,7 +8,6 @@ import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.repository.entities.RequestEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +72,7 @@ public class RequestDB {
         if (requestEntities.size() < requestIds.length) {
             throw new RuntimeException("Нет заявок в нужном статусе");
         } else {
-            for (RequestEntity request: requestEntities) {
+            for (RequestEntity request : requestEntities) {
                 request.setConfirmed(RequestStatusEnum.REJECTED);
                 repository.save(request);
             }
@@ -87,7 +86,7 @@ public class RequestDB {
         if (requestEntities.size() < requestsIds.length) {
             throw new RuntimeException("Нет заявок в нужном статусе");
         } else {
-            for (RequestEntity request: requestEntities) {
+            for (RequestEntity request : requestEntities) {
                 request.setConfirmed(RequestStatusEnum.ALLOWS);
                 repository.save(request);
             }

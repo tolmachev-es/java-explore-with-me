@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import ru.practicum.server.dto.UpdateEventAdminRequestDto;
 import ru.practicum.server.enums.PrivateStateActionEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.AlreadyUseException;
@@ -21,8 +20,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ru.practicum.server.enums.PrivateStateActionEnum.CANCEL_REVIEW;
 
 @Component
 @RequiredArgsConstructor

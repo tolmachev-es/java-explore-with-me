@@ -11,8 +11,6 @@ import ru.practicum.server.service.interfaces.EventService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/admin")

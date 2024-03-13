@@ -35,6 +35,7 @@ public interface EventService {
     ResponseEntity<?> getRequestByUser(Long userId);
 
     ResponseEntity<?> removeRequest(Long requestId, Long userId);
+
     ResponseEntity<?> getEvents(FilterParam filterParam);
 
     ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);

@@ -2,7 +2,6 @@ package ru.practicum.server.repository.entities;
 
 import lombok.Data;
 import ru.practicum.server.enums.RequestStatusEnum;
-import ru.practicum.server.enums.StateEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
