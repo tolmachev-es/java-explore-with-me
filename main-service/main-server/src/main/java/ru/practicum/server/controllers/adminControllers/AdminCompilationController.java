@@ -16,7 +16,7 @@ import javax.validation.constraints.PositiveOrZero;
 @RequestMapping(path = "/admin")
 @RequiredArgsConstructor
 @Validated
-public class AdminController {
+public class AdminCompilationController {
     private final EventService eventService;
 
 

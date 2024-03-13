@@ -52,7 +52,7 @@ public class EventDB {
         }
     }
 
-    public Event updateEvent(Event updateEvent, Long userId, Long eventId, PrivateStateActionEnum actionEnum) {
+    public Event updateEvent(Event updateEvent, Long userId, Long eventId, StateEnum stateEnum) {
         Optional<EventEntity> event;
         if (userId != null) {
             event = eventRepository.getEventEntitiesByOwnerIdAndId(userId, eventId);
@@ -65,15 +65,7 @@ public class EventDB {
             } else if (event.get().getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
                 throw new IncorrectDateException("Дата события не соответствует необходимой для изменения");
             } else {
-                EventEntity eventEntity = setDifferentFields(event.get(), updateEvent);
-                switch (actionEnum) {
-                    case CANCEL_REVIEW:
-                        eventEntity.setState(StateEnum.CANCELED);
-                        break;
-                    case SEND_TO_REVIEW:
-                        eventEntity.setState(StateEnum.PENDING);
-                        break;
-                }
+                EventEntity eventEntity = setDifferentFields(event.get(), updateEvent, stateEnum);
                 eventRepository.save(eventEntity);
                 return EventMapper.EVENT_MAPPER.fromEventEntity(eventEntity);
             }
@@ -103,7 +95,13 @@ public class EventDB {
                 .map(EventMapper.EVENT_MAPPER::fromEventEntity).collect(Collectors.toList());
     }
 
-    private EventEntity setDifferentFields(EventEntity event, Event newEvent) {
+    private EventEntity setDifferentFields(EventEntity event, Event newEvent, StateEnum stateEnum) {
+        if (stateEnum != null) {
+            if (stateEnum == StateEnum.PUBLISHED) {
+                event.setPublishedOn(LocalDateTime.now());
+            }
+            event.setState(stateEnum);
+        }
         if (newEvent.getAnnotation() != null) {
             event.setAnnotation(newEvent.getAnnotation());
         }

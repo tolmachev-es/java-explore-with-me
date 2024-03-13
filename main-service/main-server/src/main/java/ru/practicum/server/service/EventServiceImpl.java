@@ -15,10 +15,7 @@ import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
 import ru.practicum.server.models.FilterParam;
 import ru.practicum.server.models.User;
-import ru.practicum.server.repository.CategoryDB;
-import ru.practicum.server.repository.EventDB;
-import ru.practicum.server.repository.RequestDB;
-import ru.practicum.server.repository.UserDB;
+import ru.practicum.server.repository.*;
 import ru.practicum.server.repository.entities.RequestEntity;
 import ru.practicum.server.service.interfaces.EventService;
 
@@ -34,6 +31,7 @@ public class EventServiceImpl implements EventService {
     private final EventDB eventStorage;
     private final UserDB userStorage;
     private final RequestDB requestStorage;
+    private final CompilationDB compilationStorage;
 
     @Override
     public ResponseEntity<?> getByUserId(Long userId, Pageable pageable) {
@@ -72,8 +70,19 @@ public class EventServiceImpl implements EventService {
                                          Long eventId) {
         Event event = EventMapper.EVENT_MAPPER.fromUpdateEventRequest(updateEvent);
         event.setCategory(categoryStorage.getCategoryById(updateEvent.getCategory()));
+        StateEnum nextState = null;
+        if (updateEvent.getStateAction() != null) {
+            switch (updateEvent.getStateAction()) {
+                case CANCEL_REVIEW:
+                    nextState = StateEnum.CANCELED;
+                    break;
+                case SEND_TO_REVIEW:
+                    nextState = StateEnum.PENDING;
+                    break;
+            }
+        }
         EventFullDto eventFullDto = EventMapper.EVENT_MAPPER.toEventFullDto(
-                eventStorage.updateEvent(event, userId, eventId, updateEvent.getStateAction()));
+                eventStorage.updateEvent(event, userId, eventId, nextState));
         return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }
 
@@ -138,7 +147,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> getPageableCategory(Pageable pageable) {
-        return null;
+        List<CategoryDto> categoryDtos = categoryStorage.getPageableCategory(pageable)
+                .stream()
+                .map(EventMapper.EVENT_MAPPER::toCategoryDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(categoryDtos, HttpStatus.OK);
     }
 
     @Override
@@ -198,7 +211,28 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto) {
+        Event event = EventMapper.EVENT_MAPPER.fromUpdateAdminEventRequest(requestDto);
+        if (requestDto.getCategory() != null) {
+            event.setCategory(categoryStorage.getCategoryById(requestDto.getCategory()));
+        }
+        StateEnum nextState = null;
+        if (requestDto.getStateAction() != null) {
+            switch (requestDto.getStateAction()) {
+                case REJECT_EVENT:
+                    nextState = StateEnum.CANCELED;
+                    break;
+                case PUBLISH_EVENT:
+                    nextState = StateEnum.PUBLISHED;
+                    break;
+            }
+        }
+        EventFullDto updateEvent = EventMapper.EVENT_MAPPER.toEventFullDto(
+                eventStorage.updateEvent(event, null, eventId, nextState));
+        return new ResponseEntity<>(updateEvent, HttpStatus.OK);
+    }
 
+    @Override
+    public ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto) {
         return null;
     }
 

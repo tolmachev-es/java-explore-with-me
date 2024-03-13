@@ -2,6 +2,7 @@ package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import ru.practicum.server.dto.CategoryDto;
 import ru.practicum.server.exceptions.NotFoundException;
@@ -9,7 +10,9 @@ import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.repository.entities.CategoryEntity;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -48,5 +51,13 @@ public class CategoryDB {
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(String.format("Category with id=%s not found", categoryId));
         }
+    }
+
+    public List<Category> getPageableCategory(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .toList()
+                .stream()
+                .map(EventMapper.EVENT_MAPPER::fromCategoryEntity)
+                .collect(Collectors.toList());
     }
 }

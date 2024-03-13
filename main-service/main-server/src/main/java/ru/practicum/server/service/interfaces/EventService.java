@@ -39,4 +39,5 @@ public interface EventService {
     ResponseEntity<?> getEvents(FilterParam filterParam);
 
     ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
+    ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto);
 }
