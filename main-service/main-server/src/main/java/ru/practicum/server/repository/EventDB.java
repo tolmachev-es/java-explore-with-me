@@ -167,7 +167,7 @@ public class EventDB {
     }
 
     private static Specification<EventEntity> categorySpecification(List<Long> categories) {
-        if (categories.isEmpty()) {
+        if (categories == null) {
             return null;
         }
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("CATEGORY_ID").in(categories));
@@ -184,7 +184,7 @@ public class EventDB {
         if (start == null) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("EVENT_DATE"),
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"),
                 start);
     }
 
@@ -192,7 +192,7 @@ public class EventDB {
         if (end == null) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("EVENT_DATE"),
+        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
                 end);
     }
 
