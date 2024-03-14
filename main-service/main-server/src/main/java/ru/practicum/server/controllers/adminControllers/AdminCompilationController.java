@@ -21,22 +21,19 @@ public class AdminCompilationController {
 
 
     @PostMapping("/compilations")
-    ResponseEntity<?> createCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto,
-                                        HttpServletRequest request) {
-        return null;
+    ResponseEntity<?> createCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto) {
+        return eventService.createCompilation(newCompilationDto);
     }
 
     @DeleteMapping("/compilations/{compId}")
-    ResponseEntity<?> removeCompilation(@PositiveOrZero @PathVariable(name = "compId") Long compId,
-                                        HttpServletRequest request) {
-        return null;
+    ResponseEntity<?> removeCompilation(@PositiveOrZero @PathVariable(name = "compId") Long compId) {
+        return eventService.removeCompilation(compId);
     }
 
     @PatchMapping("/compilation/{compId}")
     ResponseEntity<?> updateCompilation(@Valid @RequestBody UpdateCompilationRequest updateCompilationRequest,
-                                        @PositiveOrZero @PathVariable(name = "compId") Long compId,
-                                        HttpServletRequest request) {
-        return null;
+                                        @PositiveOrZero @PathVariable(name = "compId") Long compId) {
+        return eventService.updateCompilation(compId, updateCompilationRequest);
     }
 
 

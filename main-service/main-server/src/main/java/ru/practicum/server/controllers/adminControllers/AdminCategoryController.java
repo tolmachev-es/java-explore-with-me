@@ -19,21 +19,18 @@ public class AdminCategoryController {
     private final EventService eventService;
 
     @PostMapping()
-    ResponseEntity<?> createCategory(@Valid @RequestBody NewCategoryDto newCategoryDto,
-                                     HttpServletRequest request) {
+    ResponseEntity<?> createCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         return eventService.createCategory(newCategoryDto);
     }
 
     @DeleteMapping("/{catId}")
-    ResponseEntity<?> removeCategory(@PathVariable(name = "catId") Long catId,
-                                     HttpServletRequest request) {
+    ResponseEntity<?> removeCategory(@PathVariable(name = "catId") Long catId) {
         return eventService.removeCategory(catId);
     }
 
     @PatchMapping("/{catId}")
     ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDto categoryDto,
-                                     @PathVariable(name = "catId") Long catId,
-                                     HttpServletRequest request) {
+                                     @PathVariable(name = "catId") Long catId) {
         return eventService.updateCategory(categoryDto, catId);
     }
 }

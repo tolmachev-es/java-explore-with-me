@@ -23,23 +23,20 @@ public class AdminUsersController {
     private final UserService userService;
 
     @PostMapping
-    ResponseEntity<?> createUser(@Valid @RequestBody NewUserRequestDao newUser,
-                                 HttpServletRequest request) {
+    ResponseEntity<?> createUser(@Valid @RequestBody NewUserRequestDao newUser) {
         return userService.createNewUser(newUser);
     }
 
     @GetMapping
     ResponseEntity<?> getUsers(@Nullable @RequestParam(name = "ids", defaultValue = "") List<Long> ids,
                                @RequestParam(name = "from", defaultValue = "0") Integer from,
-                               @RequestParam(name = "size", defaultValue = "10") Integer size,
-                               HttpServletRequest request) {
+                               @RequestParam(name = "size", defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return userService.getUsers(ids, pageable);
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> removeUser(@NotNull @PathVariable long id,
-                                 HttpServletRequest request) {
+    ResponseEntity<?> removeUser(@NotNull @PathVariable long id) {
         return userService.removeUserById(id);
     }
 }

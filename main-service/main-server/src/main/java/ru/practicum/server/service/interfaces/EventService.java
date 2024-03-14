@@ -4,7 +4,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.dto.*;
-import ru.practicum.server.models.FilterParam;
+import ru.practicum.server.models.AdminFilterParam;
+import ru.practicum.server.models.PublicFilterParam;
 
 @Service
 public interface EventService {
@@ -36,8 +37,14 @@ public interface EventService {
 
     ResponseEntity<?> removeRequest(Long requestId, Long userId);
 
-    ResponseEntity<?> getEvents(FilterParam filterParam);
+    ResponseEntity<?> getEvents(AdminFilterParam adminFilterParam);
 
     ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
     ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto);
+    ResponseEntity<?> getCompilationById(Long compId);
+    ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable);
+    ResponseEntity<?> removeCompilation(Long id);
+    ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request);
+
+    ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam);
 }

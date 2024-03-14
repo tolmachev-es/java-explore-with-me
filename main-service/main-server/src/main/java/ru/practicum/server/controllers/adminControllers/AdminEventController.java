@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.server.dto.UpdateEventAdminRequestDto;
 import ru.practicum.server.enums.RequestStatusEnum;
-import ru.practicum.server.models.FilterParam;
+import ru.practicum.server.models.AdminFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 
 import javax.validation.Valid;
@@ -30,13 +30,15 @@ public class AdminEventController {
                                 @RequestParam(name = "rangeEnd") LocalDateTime rangeEnd,
                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        FilterParam filterParam = FilterParam.builder()
+        AdminFilterParam adminFilterParam = AdminFilterParam.builder()
                 .users(users)
                 .states(states.stream().map(RequestStatusEnum::valueOf).collect(Collectors.toList()))
                 .categories(categories)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
                 .pageable(PageRequest.of(from / size, size))
                 .build();
-        return eventService.getEvents(filterParam);
+        return eventService.getEvents(adminFilterParam);
     }
 
     @PatchMapping("/{eventId}")

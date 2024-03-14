@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @SuperBuilder
-public class FilterParam {
+public class AdminFilterParam {
     private List<Long> users;
     private List<RequestStatusEnum> states;
     private List<Long> categories;

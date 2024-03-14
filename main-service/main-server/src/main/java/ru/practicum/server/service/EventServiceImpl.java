@@ -11,10 +11,7 @@ import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.IncorrectDateException;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.mappers.UserMapper;
-import ru.practicum.server.models.Category;
-import ru.practicum.server.models.Event;
-import ru.practicum.server.models.FilterParam;
-import ru.practicum.server.models.User;
+import ru.practicum.server.models.*;
 import ru.practicum.server.repository.*;
 import ru.practicum.server.repository.entities.RequestEntity;
 import ru.practicum.server.service.interfaces.EventService;
@@ -201,8 +198,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public ResponseEntity<?> getEvents(FilterParam filterParam) {
-        List<Event> events = eventStorage.getEventsByFilter(filterParam);
+    public ResponseEntity<?> getEvents(AdminFilterParam adminFilterParam) {
+        List<Event> events = eventStorage.getEventsByFilter(adminFilterParam);
         List<EventFullDto> eventFullDtos = events.stream()
                 .map(EventMapper.EVENT_MAPPER::toEventFullDto)
                 .collect(Collectors.toList());
@@ -233,7 +230,45 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto) {
-        return null;
+        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
+                compilationStorage.createCompilation(newCompilationDto));
+        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getCompilationById(Long compId) {
+        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
+                compilationStorage.getCompilationById(compId));
+
+        return new ResponseEntity<>(compilationDto, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable) {
+        List<CompilationDto> compilationDto = compilationStorage.getPageableCompilations(pinned, pageable)
+                .stream()
+                .map(EventMapper.EVENT_MAPPER::fromCompilationEntity)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> removeCompilation(Long id) {
+        compilationStorage.removeById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request) {
+        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
+                compilationStorage.updateCompilation(request, compilationId));
+        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam) {
+        List<Event> events = eventStorage.getEventsByPublicFilter(filterParam);
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
 }

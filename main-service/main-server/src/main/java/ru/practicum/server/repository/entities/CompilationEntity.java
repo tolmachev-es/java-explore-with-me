@@ -1,6 +1,7 @@
 package ru.practicum.server.repository.entities;
 
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class CompilationEntity {
     private String title;
     @Column(name = "PINNED", nullable = false)
     private Boolean pinned;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.DETACH})
     @JoinTable(
             name = "COMPILATION_EVENTS",
             joinColumns = @JoinColumn(name = "COMPILATION_ID"),

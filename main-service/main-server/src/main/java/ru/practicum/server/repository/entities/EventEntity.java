@@ -1,10 +1,13 @@
 package ru.practicum.server.repository.entities;
 
 import lombok.Data;
+import org.hibernate.annotations.Filter;
 import ru.practicum.server.enums.StateEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -40,4 +43,8 @@ public class EventEntity {
     private StateEnum state;
     @Column(name = "PAID")
     private Boolean paid;
+    @OneToMany
+    @JoinTable(name = "REQUESTS", joinColumns = @JoinColumn(name = "EVENT_ID"))
+    @Filter(name = "CONFIRMED", condition = "CONFIRMED IS TRUE")
+    private List<RequestEntity> requestEntities = new ArrayList<>();
 }

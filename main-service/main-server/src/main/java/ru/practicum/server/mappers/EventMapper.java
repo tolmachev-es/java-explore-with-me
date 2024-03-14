@@ -7,6 +7,7 @@ import ru.practicum.server.dto.*;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
 import ru.practicum.server.repository.entities.CategoryEntity;
+import ru.practicum.server.repository.entities.CompilationEntity;
 import ru.practicum.server.repository.entities.EventEntity;
 import ru.practicum.server.repository.entities.RequestEntity;
 
@@ -55,6 +56,12 @@ public interface EventMapper {
     @Mapping(target = "requester", expression = "java(entity.getUserId().getId())")
     @Mapping(target = "state", expression = "java(entity.getEventId().getState())")
     ParticipationRequestDto fromRequestEntity(RequestEntity entity);
-
+    @Mapping(target = "category", ignore = true)
     Event fromUpdateAdminEventRequest(UpdateEventAdminRequestDto updateEventAdminRequestDto);
+    @Mapping(target = "events", source = "eventEntities")
+    CompilationDto fromCompilationEntity(CompilationEntity compilationEntity);
+    @Mapping(target = "initiator", source = "owner")
+    EventShortDto toEventShortDtoFromEntity(EventEntity eventEntity);
+
+    CompilationEntity toCompilationEntityFromNewCompilationDto(NewCompilationDto newCompilationDto);
 }
