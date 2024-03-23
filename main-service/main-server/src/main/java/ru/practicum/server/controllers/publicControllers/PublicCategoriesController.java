@@ -16,7 +16,7 @@ public class PublicCategoriesController {
     @GetMapping
     ResponseEntity<?> getCategories(@RequestParam(name = "from", defaultValue = "0") Integer from,
                                     @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        Pageable pageable = PageRequest.of(from /size, size);
+        Pageable pageable = PageRequest.of(from / size, size);
         return eventService.getPageableCategory(pageable);
     }
 

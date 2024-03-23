@@ -19,5 +19,7 @@ public class PublicFilterParam {
     private SortMethod sort;
     private Pageable pageable;
 
-    public enum SortMethod{EVENT_DATE, VIEWS};
+    public enum SortMethod {EVENT_DATE, VIEWS}
+
+    ;
 }

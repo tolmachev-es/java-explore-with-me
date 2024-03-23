@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.server.dto.NewUserRequestDao;
 import ru.practicum.server.service.interfaces.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;

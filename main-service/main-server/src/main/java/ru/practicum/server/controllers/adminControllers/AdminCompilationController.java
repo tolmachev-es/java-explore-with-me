@@ -8,7 +8,6 @@ import ru.practicum.server.dto.NewCompilationDto;
 import ru.practicum.server.dto.UpdateCompilationRequest;
 import ru.practicum.server.service.interfaces.EventService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
 

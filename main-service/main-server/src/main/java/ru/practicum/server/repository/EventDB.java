@@ -1,7 +1,6 @@
 package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,24 +12,93 @@ import ru.practicum.server.exceptions.IncorrectDateException;
 import ru.practicum.server.exceptions.IncorrectRequestException;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
-import ru.practicum.server.models.Event;
 import ru.practicum.server.models.AdminFilterParam;
+import ru.practicum.server.models.Event;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.repository.entities.EventEntity;
 import ru.practicum.server.repository.entities.RequestEntity;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class EventDB {
     private final EventRepository eventRepository;
+
+    private static Specification<EventEntity> ownerSpecification(List<Long> users) {
+        if (users.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("OWNER_ID").in(users));
+    }
+
+    private static Specification<EventEntity> categorySpecification(List<Long> categories) {
+        if (categories == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("CATEGORY_ID").in(categories));
+    }
+
+    private static Specification<EventEntity> statesSpecification(List<RequestStatusEnum> states) {
+        if (states.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("STATUS").in(states));
+    }
+
+    private static Specification<EventEntity> startSpecification(LocalDateTime start) {
+        if (start == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"),
+                start);
+    }
+
+    private static Specification<EventEntity> endSpecification(LocalDateTime end) {
+        if (end == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
+                end);
+    }
+
+    private static Specification<EventEntity> textSpecification(String text) {
+        if (text.isBlank()) {
+            return null;
+        }
+
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("annotation"), "%" + text + "%"));
+    }
+
+    private static Specification<EventEntity> paidSpecification(Boolean paid) {
+        if (paid == null) {
+            return null;
+        }
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("PAID"), paid));
+    }
+
+    private static Specification<EventEntity> availableSpecification(Boolean available) {
+        if (available == null || !available) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<RequestEntity> subRoot = subquery.from(RequestEntity.class);
+            Predicate joinCondition = criteriaBuilder.equal(root.get("ID"), subRoot.get("EVENT_ID"));
+            Predicate whereCondition = criteriaBuilder.equal(subRoot.get("CONFIRMED"), true);
+            subquery.where(whereCondition, joinCondition);
+            Predicate mainQueryCondition = criteriaBuilder.exists(subquery);
+            query.where(mainQueryCondition);
+            return null;
+        };
+    }
 
     public Event createEvent(Event event) {
         EventEntity eventEntity = EventMapper.EVENT_MAPPER.toEventEntity(event);
@@ -157,73 +225,5 @@ public class EventDB {
             event.setTitle(newEvent.getTitle());
         }
         return event;
-    }
-
-    private static Specification<EventEntity> ownerSpecification(List<Long> users) {
-        if (users.isEmpty()) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("OWNER_ID").in(users));
-    }
-
-    private static Specification<EventEntity> categorySpecification(List<Long> categories) {
-        if (categories == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("CATEGORY_ID").in(categories));
-    }
-
-    private static Specification<EventEntity> statesSpecification(List<RequestStatusEnum> states) {
-        if (states.isEmpty()) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("STATUS").in(states));
-    }
-
-    private static Specification<EventEntity> startSpecification(LocalDateTime start) {
-        if (start == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"),
-                start);
-    }
-
-    private static Specification<EventEntity> endSpecification(LocalDateTime end) {
-        if (end == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
-                end);
-    }
-
-    private static Specification<EventEntity> textSpecification(String text) {
-        if (text.isBlank()) {
-            return null;
-        }
-
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("annotation"), "%" + text + "%"));
-    }
-
-    private static Specification<EventEntity> paidSpecification(Boolean paid) {
-        if (paid == null) {
-            return null;
-        }
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("PAID"), paid));
-    }
-
-    private static Specification<EventEntity> availableSpecification(Boolean available) {
-        if (available == null || !available) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> {
-            Subquery<Long> subquery = query.subquery(Long.class);
-            Root<RequestEntity> subRoot = subquery.from(RequestEntity.class);
-            Predicate joinCondition = criteriaBuilder.equal(root.get("ID"), subRoot.get("EVENT_ID"));
-            Predicate whereCondition = criteriaBuilder.equal(subRoot.get("CONFIRMED"), true);
-            subquery.where(whereCondition, joinCondition);
-            Predicate mainQueryCondition = criteriaBuilder.exists(subquery);
-            query.where(mainQueryCondition);
-            return null;
-        };
     }
 }

@@ -40,10 +40,16 @@ public interface EventService {
     ResponseEntity<?> getEvents(AdminFilterParam adminFilterParam);
 
     ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
+
     ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto);
+
     ResponseEntity<?> getCompilationById(Long compId);
+
     ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable);
+
     ResponseEntity<?> removeCompilation(Long id);
+
     ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request);
+
     ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam);
 }

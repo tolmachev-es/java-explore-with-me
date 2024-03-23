@@ -56,10 +56,13 @@ public interface EventMapper {
     @Mapping(target = "requester", expression = "java(entity.getUserId().getId())")
     @Mapping(target = "state", expression = "java(entity.getEventId().getState())")
     ParticipationRequestDto fromRequestEntity(RequestEntity entity);
+
     @Mapping(target = "category", ignore = true)
     Event fromUpdateAdminEventRequest(UpdateEventAdminRequestDto updateEventAdminRequestDto);
+
     @Mapping(target = "events", source = "eventEntities")
     CompilationDto fromCompilationEntity(CompilationEntity compilationEntity);
+
     @Mapping(target = "initiator", source = "owner")
     EventShortDto toEventShortDtoFromEntity(EventEntity eventEntity);
 

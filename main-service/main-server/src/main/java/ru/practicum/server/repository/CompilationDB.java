@@ -20,6 +20,13 @@ public class CompilationDB {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
 
+    private static Specification<CompilationEntity> hasPinned(Boolean pinned) {
+        if (pinned == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("pinned"), pinned);
+    }
+
     public CompilationEntity getCompilationById(Long id) {
         Optional<CompilationEntity> compilationEntity = compilationRepository.findById(id);
         if (compilationEntity.isPresent()) {
@@ -51,13 +58,6 @@ public class CompilationDB {
                 request, compilationRepository.getReferenceById(compilationId));
         compilationRepository.save(compilationEntity);
         return compilationEntity;
-    }
-
-    private static Specification<CompilationEntity> hasPinned(Boolean pinned) {
-        if (pinned == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("pinned"), pinned);
     }
 
     private List<EventEntity> getAllEvents(List<Long> events) {

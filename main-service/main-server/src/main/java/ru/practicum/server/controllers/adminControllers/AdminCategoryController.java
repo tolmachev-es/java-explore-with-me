@@ -8,7 +8,6 @@ import ru.practicum.server.dto.CategoryDto;
 import ru.practicum.server.dto.NewCategoryDto;
 import ru.practicum.server.service.interfaces.EventService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
