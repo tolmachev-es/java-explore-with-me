@@ -45,6 +45,5 @@ public interface EventService {
     ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable);
     ResponseEntity<?> removeCompilation(Long id);
     ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request);
-
     ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam);
 }
