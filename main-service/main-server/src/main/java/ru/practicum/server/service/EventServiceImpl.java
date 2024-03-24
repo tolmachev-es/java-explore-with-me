@@ -130,7 +130,7 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> createCategory(NewCategoryDto newCategoryDto) {
         Category category = EventMapper.EVENT_MAPPER.fromNewCategoryDto(newCategoryDto);
         CategoryDto categoryDto = EventMapper.EVENT_MAPPER.toCategoryDto(categoryStorage.createCategory(category));
-        return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+        return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
     }
 
     @Override

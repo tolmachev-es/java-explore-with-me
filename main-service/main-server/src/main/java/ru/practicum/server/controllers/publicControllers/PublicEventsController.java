@@ -1,6 +1,7 @@
 package ru.practicum.server.controllers.publicControllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
+@Slf4j
 public class PublicEventsController {
     private final EventService eventService;
 
@@ -39,6 +41,7 @@ public class PublicEventsController {
                 .sort(sort)
                 .pageable(PageRequest.of(from / size, size))
                 .build();
+        log.info("Has new request go get events with filter params {}", filterParam.toString());
         return eventService.getEventsByPublic(filterParam);
     }
 }
