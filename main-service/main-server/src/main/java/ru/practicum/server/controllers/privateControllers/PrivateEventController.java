@@ -27,23 +27,20 @@ public class PrivateEventController {
     @GetMapping("/{userId}/events")
     ResponseEntity<?> getByUserId(@Valid @PathVariable(name = "userId") Long userId,
                                   @Nullable @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                  @Nullable @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
-                                  HttpServletRequest request) {
+                                  @Nullable @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return eventService.getByUserId(userId, pageable);
     }
 
     @PostMapping("/{userId}/events")
     ResponseEntity<?> createNewEvent(@Valid @RequestBody NewEventDto newEventDto,
-                                     @PathVariable(name = "userId") Long userId,
-                                     HttpServletRequest request) {
+                                     @PathVariable(name = "userId") Long userId) {
         return eventService.createNewEvent(newEventDto, userId);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
     ResponseEntity<?> getEventById(@Positive @PathVariable(name = "userId") Long userId,
-                                   @Positive @PathVariable(name = "eventId") Long eventId,
-                                   HttpServletRequest request) {
+                                   @Positive @PathVariable(name = "eventId") Long eventId) {
         return eventService.getByEventId(userId, eventId);
     }
 

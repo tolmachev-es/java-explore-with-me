@@ -66,7 +66,9 @@ public class EventServiceImpl implements EventService {
                                          Long userId,
                                          Long eventId) {
         Event event = EventMapper.EVENT_MAPPER.fromUpdateEventRequest(updateEvent);
-        event.setCategory(categoryStorage.getCategoryById(updateEvent.getCategory()));
+        if (updateEvent.getCategory() != null) {
+            event.setCategory(categoryStorage.getCategoryById(updateEvent.getCategory()));
+        }
         StateEnum nextState = null;
         if (updateEvent.getStateAction() != null) {
             switch (updateEvent.getStateAction()) {
@@ -119,7 +121,9 @@ public class EventServiceImpl implements EventService {
         List<ParticipationRequestDto> listToReturn = resultList.stream()
                 .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(listToReturn, HttpStatus.OK);
+        EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
+        eventRequestStatusUpdateResult.setConfirmedRequest(listToReturn);
+        return new ResponseEntity<>(eventRequestStatusUpdateResult, HttpStatus.OK);
     }
 
     @Override
@@ -167,14 +171,16 @@ public class EventServiceImpl implements EventService {
         if (event.getOwner().getId().equals(userId)) {
             throw new RuntimeException("event service impl create request");
         }
-        if (event.getState().equals(StateEnum.PUBLISHED)) {
+        if (!event.getState().equals(StateEnum.PUBLISHED)) {
             throw new RuntimeException("event service impl create req 2");
         }
-        if (event.getParticipantLimit() > requestStorage.countGuest(eventId)) {
+        if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() <= event.getRequestEntities().size()) {
             throw new RuntimeException("Count exception");
         }
         if (event.getRequestModeration().equals(false) && event.getParticipantLimit().equals(0)) {
             request.setConfirmed(RequestStatusEnum.ALLOWS);
+        } else {
+            request.setConfirmed(RequestStatusEnum.PENDING);
         }
         request.setCreated(LocalDateTime.now());
         ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER.fromRequestEntity(

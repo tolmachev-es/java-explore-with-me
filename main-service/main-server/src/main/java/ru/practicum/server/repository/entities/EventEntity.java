@@ -43,8 +43,16 @@ public class EventEntity {
     private StateEnum state;
     @Column(name = "PAID")
     private Boolean paid;
-    @OneToMany
-    @JoinTable(name = "REQUESTS", joinColumns = @JoinColumn(name = "EVENT_ID"))
-    @Filter(name = "CONFIRMED", condition = "CONFIRMED IS TRUE")
-    private List<RequestEntity> requestEntities = new ArrayList<>();
+    @Column(name = "LAT")
+    private Float locationLat;
+    @Column(name = "LON")
+    private Float locationLon;
+    @OneToMany(fetch = FetchType.EAGER, targetEntity = RequestEntity.class)
+    @JoinTable(
+            name = "REQUESTS",
+            joinColumns = @JoinColumn(name = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "EVENT_ID")
+    )
+    private List<RequestEntity> requestEntities = new ArrayList<>(0);
+
 }

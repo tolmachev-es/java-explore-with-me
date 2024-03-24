@@ -51,7 +51,7 @@ public class RequestDB {
     @Transactional
     public List<RequestEntity> requestConfirmStatus(Long[] requestIds, int limit, Long eventId) {
         if (limit > 0) {
-            Long countConfirmed = repository.countAllByEventId_IdAndConfirmed(eventId, RequestStatusEnum.PENDING);
+            Integer countConfirmed = repository.countByEventId_IdAndConfirmed(eventId, RequestStatusEnum.PENDING);
             if (countConfirmed + requestIds.length > limit) {
                 throw new RuntimeException("Количество заявок превышает количество возможных");
             } else if (countConfirmed + requestIds.length == limit) {
@@ -66,6 +66,7 @@ public class RequestDB {
         }
     }
 
+    @Transactional
     public List<RequestEntity> requestRejectStatus(Long[] requestIds) {
         List<RequestEntity> requestEntities = repository.getAllByIdInAndConfirmed(
                 List.of(requestIds), RequestStatusEnum.PENDING);

@@ -17,7 +17,7 @@ public class RequestEntity {
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserEntity userId;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_ID", nullable = false)
     private EventEntity eventId;
     @Column(name = "CONFIRMED", nullable = false)

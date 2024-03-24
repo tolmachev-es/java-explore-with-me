@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.AlreadyUseException;
@@ -70,7 +71,7 @@ public class EventDB {
     }
 
     private static Specification<EventEntity> textSpecification(String text) {
-        if (text.isBlank()) {
+        if (text == null) {
             return null;
         }
 
@@ -99,12 +100,12 @@ public class EventDB {
             return null;
         };
     }
-
+    @Transactional
     public Event createEvent(Event event) {
         EventEntity eventEntity = EventMapper.EVENT_MAPPER.toEventEntity(event);
         try {
             eventRepository.save(eventEntity);
-            return EventMapper.EVENT_MAPPER.fromEventEntity(eventEntity);
+            return getById(eventEntity.getId());
         } catch (ConstraintViolationException e) {
             throw new AlreadyUseException("Произошла ошибка при создании");
         }
@@ -136,7 +137,7 @@ public class EventDB {
         if (event.isPresent()) {
             if (event.get().getState().equals(StateEnum.PUBLISHED)) {
                 throw new IncorrectRequestException("Event must not be published");
-            } else if (event.get().getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
+            } else if (event.get().getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
                 throw new IncorrectDateException("Дата события не соответствует необходимой для изменения");
             } else {
                 EventEntity eventEntity = setDifferentFields(event.get(), updateEvent, stateEnum);

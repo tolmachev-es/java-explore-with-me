@@ -2,9 +2,13 @@ package ru.practicum.server.models;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import ru.practicum.server.dto.LocationDto;
 import ru.practicum.server.enums.StateEnum;
+import ru.practicum.server.repository.entities.RequestEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -16,11 +20,14 @@ public class Event {
     private LocalDateTime eventDate;
     private Boolean paid;
     private Integer participantLimit;
+    private LocationDto location;
     private Boolean requestModeration;
     private String title;
     private LocalDateTime createdOn;
     private LocalDateTime publishedOn;
     private User owner;
     private StateEnum state;
+    private List<RequestEntity> requestEntities;
     private Integer views;
+
 }

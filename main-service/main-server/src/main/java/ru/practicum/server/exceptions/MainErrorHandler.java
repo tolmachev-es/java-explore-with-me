@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class MainErrorHandler {
@@ -29,6 +30,7 @@ public class MainErrorHandler {
             }
         }
         ApiError apiError = ApiError.builder()
+                .errors(error.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.toList()))
                 .status(String.valueOf(HttpStatus.BAD_REQUEST))
                 .reason("Incorrectly made request.")
                 .message("add")

@@ -6,14 +6,11 @@ import org.mapstruct.factory.Mappers;
 import ru.practicum.server.dto.*;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
-import ru.practicum.server.repository.entities.CategoryEntity;
-import ru.practicum.server.repository.entities.CompilationEntity;
-import ru.practicum.server.repository.entities.EventEntity;
-import ru.practicum.server.repository.entities.RequestEntity;
+import ru.practicum.server.repository.entities.*;
 
 import java.time.LocalDateTime;
 
-@Mapper(imports = {LocalDateTime.class})
+@Mapper(imports = {LocalDateTime.class, LocationDto.class})
 public interface EventMapper {
     EventMapper EVENT_MAPPER = Mappers.getMapper(EventMapper.class);
 
@@ -29,6 +26,8 @@ public interface EventMapper {
 
     @Mapping(target = "participantLimit", source = "limit")
     @Mapping(target = "requestModeration", source = "moderation")
+    @Mapping(target = "location", expression = "java(new LocationDto(eventEntity.getLocationLat(), eventEntity.getLocationLon()))")
+    @Mapping(target = "requestEntities", expression = "java(eventEntity.getRequestEntities() == null ? new ArrayList<>() : eventEntity.getRequestEntities())")
     Event fromEventEntity(EventEntity eventEntity);
 
     @Mapping(target = "paid", defaultValue = "false", source = "paid")
@@ -41,6 +40,8 @@ public interface EventMapper {
     @Mapping(target = "limit", source = "participantLimit")
     @Mapping(target = "moderation", source = "requestModeration")
     @Mapping(target = "state", source = "state", defaultValue = "PENDING")
+    @Mapping(target = "locationLat", source = "location.lat")
+    @Mapping(target = "locationLon", source = "location.lon")
     EventEntity toEventEntity(Event event);
 
     @Mapping(target = "initiator", source = "owner")
