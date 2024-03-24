@@ -19,8 +19,8 @@ public class EventEntity {
     private Long id;
     @Column(name = "ANNOTATION", nullable = false)
     private String annotation;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")
     private CategoryEntity category;
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;

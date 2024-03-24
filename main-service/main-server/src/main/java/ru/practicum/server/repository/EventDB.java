@@ -37,21 +37,21 @@ public class EventDB {
         if (users.isEmpty()) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("OWNER_ID").in(users));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("owner").in(users));
     }
 
     private static Specification<EventEntity> categorySpecification(List<Long> categories) {
         if (categories == null) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("CATEGORY_ID").in(categories));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("category").in(categories));
     }
 
-    private static Specification<EventEntity> statesSpecification(List<RequestStatusEnum> states) {
+    private static Specification<EventEntity> statesSpecification(List<StateEnum> states) {
         if (states.isEmpty()) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("STATUS").in(states));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("state").in(states));
     }
 
     private static Specification<EventEntity> startSpecification(LocalDateTime start) {
@@ -82,7 +82,7 @@ public class EventDB {
         if (paid == null) {
             return null;
         }
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("PAID"), paid));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("paid"), paid));
     }
 
     private static Specification<EventEntity> availableSpecification(Boolean available) {
@@ -188,6 +188,15 @@ public class EventDB {
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::fromEventEntity)
                 .collect(Collectors.toList());
+    }
+
+    public Event getEventByIdAndStatusPublished(Long eventId) {
+        Optional<EventEntity> eventEntity = eventRepository.getEventEntityByIdAndState(eventId, StateEnum.PUBLISHED);
+        if (eventEntity.isPresent()) {
+            return EventMapper.EVENT_MAPPER.fromEventEntity(eventEntity.get());
+        } else {
+            throw new NotFoundException(String.format("Event with id %s not found", eventId));
+        }
     }
 
     private EventEntity setDifferentFields(EventEntity event, Event newEvent, StateEnum stateEnum) {

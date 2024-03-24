@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 
@@ -41,7 +38,13 @@ public class PublicEventsController {
                 .sort(sort)
                 .pageable(PageRequest.of(from / size, size))
                 .build();
-        log.info("Has new request go get events with filter params {}", filterParam.toString());
+        log.info("Has new request to get events with filter params {}", filterParam.toString());
         return eventService.getEventsByPublic(filterParam);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<?> getEventById(@PathVariable(name = "eventId") Long eventId) {
+        log.info("Has new request to get event with id {}", eventId);
+        return eventService.getEventByIdPublic(eventId);
     }
 }

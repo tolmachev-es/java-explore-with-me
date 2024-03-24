@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.dto.*;
 import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
@@ -40,6 +41,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> createNewEvent(NewEventDto newEventDto, Long userid) {
         User user = userStorage.getUserById(userid);
         Event event = EventMapper.EVENT_MAPPER.fromNewEventDto(newEventDto);
@@ -238,7 +240,7 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto) {
         CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
                 compilationStorage.createCompilation(newCompilationDto));
-        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
+        return new ResponseEntity<>(compilationDto, HttpStatus.CREATED);
     }
 
     @Override
@@ -275,6 +277,12 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam) {
         List<Event> events = eventStorage.getEventsByPublicFilter(filterParam);
         return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getEventByIdPublic(Long eventId) {
+        Event event = eventStorage.getEventByIdAndStatusPublished(eventId);
+        return new ResponseEntity<>(EventMapper.EVENT_MAPPER.toEventFullDto(event), HttpStatus.OK);
     }
 
 }

@@ -11,6 +11,7 @@ import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.repository.entities.CompilationEntity;
 import ru.practicum.server.repository.entities.EventEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,14 +62,20 @@ public class CompilationDB {
     }
 
     private List<EventEntity> getAllEvents(List<Long> events) {
-        Specification<EventEntity> eventEntitySpecification = Specification
-                .where((root, query, criteriaBuilder) -> root.get("id").in(events));
-        List<EventEntity> eventEntities = eventRepository.findAll(eventEntitySpecification);
-        if (eventEntities.size() < events.size()) {
-            throw new NotFoundException("NOT FOUND");
-        } else {
+        List<EventEntity> eventEntities = new ArrayList<>();
+        if (events == null) {
             return eventEntities;
+        } else {
+            Specification<EventEntity> eventEntitySpecification = Specification
+                    .where((root, query, criteriaBuilder) -> root.get("id").in(events));
+            eventEntities = eventRepository.findAll(eventEntitySpecification);
+            if (eventEntities.size() < events.size()) {
+                throw new NotFoundException("NOT FOUND");
+            } else {
+                return eventEntities;
+            }
         }
+
     }
 
     private CompilationEntity setDifferentField(UpdateCompilationRequest request, CompilationEntity compilation) {

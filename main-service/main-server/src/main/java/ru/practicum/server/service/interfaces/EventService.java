@@ -52,4 +52,6 @@ public interface EventService {
     ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request);
 
     ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam);
+
+    ResponseEntity<?> getEventByIdPublic(Long eventId);
 }

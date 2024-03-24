@@ -67,5 +67,6 @@ public interface EventMapper {
     @Mapping(target = "initiator", source = "owner")
     EventShortDto toEventShortDtoFromEntity(EventEntity eventEntity);
 
+    @Mapping(target = "pinned", defaultValue = "false", source = "pinned")
     CompilationEntity toCompilationEntityFromNewCompilationDto(NewCompilationDto newCompilationDto);
 }
