@@ -1,6 +1,7 @@
 package ru.practicum.server.controllers.adminControllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/admin/events")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AdminEventController {
     private final EventService eventService;
 
@@ -38,12 +40,14 @@ public class AdminEventController {
                 .rangeEnd(rangeEnd)
                 .pageable(PageRequest.of(from / size, size))
                 .build();
+        log.info("Has new request for search events with parameters {}", adminFilterParam.toString());
         return eventService.getEvents(adminFilterParam);
     }
 
     @PatchMapping("/{eventId}")
     ResponseEntity<?> updateEvent(@Valid @RequestBody UpdateEventAdminRequestDto requestDto,
                                   @PathVariable(name = "eventId") Long eventId) {
+        log.info("Has new request to update event with id {}", eventId);
         return eventService.updateEventByAdmin(eventId, requestDto);
     }
 }
