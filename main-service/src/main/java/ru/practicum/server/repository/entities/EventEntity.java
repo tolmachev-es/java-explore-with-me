@@ -40,6 +40,7 @@ public class EventEntity {
     @Column(name = "PUBLISHED_TIME")
     private LocalDateTime publishedOn;
     @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
     private StateEnum state;
     @Column(name = "PAID")
     private Boolean paid;

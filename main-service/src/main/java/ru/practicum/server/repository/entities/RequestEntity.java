@@ -21,6 +21,7 @@ public class RequestEntity {
     @JoinColumn(name = "EVENT_ID", nullable = false)
     private EventEntity eventId;
     @Column(name = "CONFIRMED", nullable = false)
+    @Enumerated(EnumType.STRING)
     private RequestStatusEnum confirmed;
     @Column(name = "CREATED", nullable = false)
     private LocalDateTime created;

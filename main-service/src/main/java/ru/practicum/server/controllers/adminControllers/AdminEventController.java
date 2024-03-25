@@ -37,10 +37,10 @@ public class AdminEventController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         AdminFilterParam adminFilterParam = AdminFilterParam.builder()
                 .users(users)
-                .states(states.stream().map(StateEnum::valueOf).collect(Collectors.toList()))
+                .states(states == null ? null : states.stream().map(StateEnum::valueOf).collect(Collectors.toList()))
                 .categories(categories)
-                .rangeStart(LocalDateTime.parse(rangeStart, formatter))
-                .rangeEnd(LocalDateTime.parse(rangeEnd, formatter))
+                .rangeStart(rangeStart == null ? null : LocalDateTime.parse(rangeStart, formatter))
+                .rangeEnd(rangeEnd == null ? null : LocalDateTime.parse(rangeEnd, formatter))
                 .pageable(PageRequest.of(from / size, size))
                 .build();
         log.info("Has new request for search events with parameters {}", adminFilterParam.toString());

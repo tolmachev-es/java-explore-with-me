@@ -179,15 +179,15 @@ public class EventServiceImpl implements EventService {
         if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() <= event.getRequestEntities().size()) {
             throw new RuntimeException("Count exception");
         }
-        if (event.getRequestModeration().equals(false) && event.getParticipantLimit().equals(0)) {
-            request.setConfirmed(RequestStatusEnum.ALLOWS);
+        if (event.getRequestModeration().equals(false) || event.getParticipantLimit().equals(0)) {
+            request.setConfirmed(RequestStatusEnum.CONFIRMED);
         } else {
             request.setConfirmed(RequestStatusEnum.PENDING);
         }
         request.setCreated(LocalDateTime.now());
         ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER.fromRequestEntity(
                 requestStorage.createNewRequest(request));
-        return new ResponseEntity<>(requestDto, HttpStatus.OK);
+        return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
     }
 
     @Override

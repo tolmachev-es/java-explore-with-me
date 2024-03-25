@@ -88,7 +88,7 @@ public class RequestDB {
             throw new RuntimeException("Нет заявок в нужном статусе");
         } else {
             for (RequestEntity request : requestEntities) {
-                request.setConfirmed(RequestStatusEnum.ALLOWS);
+                request.setConfirmed(RequestStatusEnum.CONFIRMED);
                 repository.save(request);
             }
         }
@@ -104,7 +104,7 @@ public class RequestDB {
                 requestStatusEnum = RequestStatusEnum.REJECTED;
                 break;
             case CONFIRMED:
-                requestStatusEnum = RequestStatusEnum.ALLOWS;
+                requestStatusEnum = RequestStatusEnum.CONFIRMED;
                 break;
             default:
                 throw new RuntimeException("Unsupported command");

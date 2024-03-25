@@ -34,7 +34,7 @@ public class EventDB {
     private final EventRepository eventRepository;
 
     private static Specification<EventEntity> ownerSpecification(List<Long> users) {
-        if (users.isEmpty()) {
+        if (users == null) {
             return null;
         }
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("owner").in(users));
@@ -48,7 +48,7 @@ public class EventDB {
     }
 
     private static Specification<EventEntity> statesSpecification(List<StateEnum> states) {
-        if (states.isEmpty()) {
+        if (states == null) {
             return null;
         }
         return (root, query, criteriaBuilder) -> criteriaBuilder.and(root.get("state").in(states));
@@ -217,7 +217,7 @@ public class EventDB {
         }
         if (newEvent.getEventDate() != null) {
             if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
-                throw new IncorrectDateException("data");
+                throw new IncorrectDateException("Event with this date does not update");
             } else {
                 event.setEventDate(newEvent.getEventDate());
             }

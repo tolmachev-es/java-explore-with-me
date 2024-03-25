@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.server.enums.PrivateStateActionEnum;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public class UpdateEventUserRequestDto {
     @Length(min = 20, max = 7000)
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future
     private LocalDateTime eventDate;
     private Boolean paid;
     @PositiveOrZero

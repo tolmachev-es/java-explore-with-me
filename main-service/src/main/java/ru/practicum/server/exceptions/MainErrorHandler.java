@@ -51,7 +51,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<?> handel(final NotFoundException notFoundException) {
+    public ResponseEntity<?> handle(final NotFoundException notFoundException) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.NOT_FOUND))
                 .reason("The required object was not found")
@@ -59,5 +59,16 @@ public class MainErrorHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({IncorrectDateException.class})
+    public ResponseEntity<?> handle(final IncorrectDateException incorrectDateException) {
+        ApiError apiError = ApiError.builder()
+                .status(String.valueOf(HttpStatus.NOT_FOUND))
+                .reason("Incorrect date exception")
+                .message(incorrectDateException.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 }

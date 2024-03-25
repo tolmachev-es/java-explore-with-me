@@ -53,9 +53,9 @@ public interface EventMapper {
     @Mapping(target = "category", ignore = true)
     Event fromUpdateEventRequest(UpdateEventUserRequestDto updateEventUserRequestDto);
 
-    @Mapping(target = "eventId", expression = "java(entity.getEventId().getId())")
+    @Mapping(target = "event", expression = "java(entity.getEventId().getId())")
     @Mapping(target = "requester", expression = "java(entity.getUserId().getId())")
-    @Mapping(target = "state", expression = "java(entity.getEventId().getState())")
+    @Mapping(target = "state", source = "confirmed")
     ParticipationRequestDto fromRequestEntity(RequestEntity entity);
 
     @Mapping(target = "category", ignore = true)
