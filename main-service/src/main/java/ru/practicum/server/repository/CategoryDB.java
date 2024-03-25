@@ -1,6 +1,7 @@
 package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.postgresql.util.PSQLException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;

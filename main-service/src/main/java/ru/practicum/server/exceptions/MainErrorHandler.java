@@ -1,5 +1,6 @@
 package ru.practicum.server.exceptions;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -67,6 +68,17 @@ public class MainErrorHandler {
                 .status(String.valueOf(HttpStatus.NOT_FOUND))
                 .reason("Incorrect date exception")
                 .message(incorrectDateException.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({PSQLException.class})
+    public ResponseEntity<?> handle(final PSQLException psqlException) {
+        ApiError apiError = ApiError.builder()
+                .status(String.valueOf(HttpStatus.CONFLICT))
+                .reason("Duplicate value in database")
+                .message(psqlException.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
