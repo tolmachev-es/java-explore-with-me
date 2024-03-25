@@ -85,7 +85,7 @@ public class CompilationDB {
         if (!request.getTitle().isBlank()) {
             compilation.setTitle(request.getTitle());
         }
-        if (!request.getEvents().isEmpty()) {
+        if (request.getEvents() != null) {
             compilation.setEventEntities(getAllEvents(request.getEvents()));
         }
         return compilation;
