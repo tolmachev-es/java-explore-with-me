@@ -190,8 +190,8 @@ public class EventServiceImpl implements EventService {
         if (!event.getState().equals(StateEnum.PUBLISHED)) {
             throw new IncorrectRequestException("Event must be PUBLISHED");
         }
-        if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() >= event.getRequestEntities().size()) {
-            throw new NotFoundException("Not enought places");
+        if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() <= event.getCountConfirmedRequests()) {
+            throw new IncorrectRequestException("Not enought places");
         }
         if (event.getRequestModeration().equals(false) || event.getParticipantLimit().equals(0)) {
             request.setConfirmed(RequestStatusEnum.CONFIRMED);

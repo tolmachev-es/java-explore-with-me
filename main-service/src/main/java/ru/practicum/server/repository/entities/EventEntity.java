@@ -1,9 +1,6 @@
 package ru.practicum.server.repository.entities;
 
 import lombok.Data;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.WhereJoinTable;
-import org.mapstruct.Condition;
 import ru.practicum.server.enums.StateEnum;
 
 import javax.persistence.*;
@@ -50,13 +47,6 @@ public class EventEntity {
     private Float locationLat;
     @Column(name = "LON")
     private Float locationLon;
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = RequestEntity.class)
-    @JoinTable(
-            name = "REQUESTS",
-            joinColumns = @JoinColumn(name = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "EVENT_ID")
-    )
-    @WhereJoinTable(clause = "CONFIRMED = 'CONFIRMED'")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "eventId")
     private List<RequestEntity> requestEntities = new ArrayList<>(0);
-
 }

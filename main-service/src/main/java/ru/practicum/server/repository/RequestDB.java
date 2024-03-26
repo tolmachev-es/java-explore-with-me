@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.enums.EventRequestStatusEnum;
 import ru.practicum.server.enums.RequestStatusEnum;
+import ru.practicum.server.exceptions.IncorrectRequestException;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.repository.entities.RequestEntity;
 
@@ -51,9 +52,9 @@ public class RequestDB {
     @Transactional
     public List<RequestEntity> requestConfirmStatus(Long[] requestIds, int limit, Long eventId) {
         if (limit > 0) {
-            Integer countConfirmed = repository.countByEventId_IdAndConfirmed(eventId, RequestStatusEnum.PENDING);
+            Integer countConfirmed = repository.countByEventId_IdAndConfirmed(eventId, RequestStatusEnum.CONFIRMED);
             if (countConfirmed + requestIds.length > limit) {
-                throw new RuntimeException("Количество заявок превышает количество возможных");
+                throw new IncorrectRequestException("Количество заявок превышает количество возможных");
             } else if (countConfirmed + requestIds.length == limit) {
                 return confirmRequests(requestIds);
             } else {
@@ -71,7 +72,7 @@ public class RequestDB {
         List<RequestEntity> requestEntities = repository.getAllByIdInAndConfirmed(
                 List.of(requestIds), RequestStatusEnum.PENDING);
         if (requestEntities.size() < requestIds.length) {
-            throw new RuntimeException("Нет заявок в нужном статусе");
+            throw new IncorrectRequestException("Нет заявок в нужном статусе");
         } else {
             for (RequestEntity request : requestEntities) {
                 request.setConfirmed(RequestStatusEnum.REJECTED);

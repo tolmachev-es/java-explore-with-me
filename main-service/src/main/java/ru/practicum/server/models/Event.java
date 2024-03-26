@@ -3,6 +3,7 @@ package ru.practicum.server.models;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.server.dto.eventDtos.LocationDto;
+import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.repository.entities.RequestEntity;
 
@@ -29,4 +30,11 @@ public class Event {
     private List<RequestEntity> requestEntities;
     private Integer views;
 
+    public long getCountConfirmedRequests() {
+        if (requestEntities == null) {
+            return 0;
+        } else {
+            return requestEntities.stream().filter(e -> e.getConfirmed().equals(RequestStatusEnum.CONFIRMED)).count();
+        }
+    }
 }
