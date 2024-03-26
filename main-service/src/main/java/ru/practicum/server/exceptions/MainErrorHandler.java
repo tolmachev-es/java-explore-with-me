@@ -62,6 +62,8 @@ public class MainErrorHandler {
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
+
+
     @ExceptionHandler({IncorrectDateException.class})
     public ResponseEntity<?> handle(final IncorrectDateException incorrectDateException) {
         ApiError apiError = ApiError.builder()
@@ -93,5 +95,16 @@ public class MainErrorHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({IncorrectSearchDate.class})
+    public ResponseEntity<?> handle(final IncorrectSearchDate incorrectSearchDate) {
+        ApiError apiError = ApiError.builder()
+                .status(String.valueOf(HttpStatus.BAD_REQUEST))
+                .reason("Incorrect search date")
+                .message(incorrectSearchDate.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 }

@@ -7,10 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.enums.StateEnum;
-import ru.practicum.server.exceptions.AlreadyUseException;
-import ru.practicum.server.exceptions.IncorrectDateException;
-import ru.practicum.server.exceptions.IncorrectRequestException;
-import ru.practicum.server.exceptions.NotFoundException;
+import ru.practicum.server.exceptions.*;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.models.AdminFilterParam;
 import ru.practicum.server.models.Event;
@@ -22,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.validation.ConstraintViolationException;
+import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -182,6 +180,9 @@ public class EventDB {
     }
 
     public List<Event> getEventsByPublicFilter(PublicFilterParam publicFilterParam) {
+        if (publicFilterParam.getEnd().isBefore(publicFilterParam.getStart())) {
+            throw new IncorrectSearchDate("End date before start date");
+        }
         Sort sort = Sort.by("ID");
         if (publicFilterParam.getSort() != null) {
             sort = Sort.by(String.valueOf(publicFilterParam.getSort()));

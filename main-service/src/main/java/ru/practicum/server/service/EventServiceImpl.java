@@ -289,7 +289,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam) {
-        List<Event> events = eventStorage.getEventsByPublicFilter(filterParam);
+        List<EventShortDto> events = eventStorage.getEventsByPublicFilter(filterParam).stream()
+                .map(EventMapper.EVENT_MAPPER::toEventShortDto)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
