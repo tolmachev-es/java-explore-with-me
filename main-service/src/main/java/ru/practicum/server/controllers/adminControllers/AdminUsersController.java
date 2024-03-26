@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.server.dto.NewUserRequestDao;
+import ru.practicum.server.dto.userDtos.NewUserRequestDao;
 import ru.practicum.server.service.interfaces.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController

@@ -135,7 +135,7 @@ public class EventDB {
             event = eventRepository.findById(eventId);
         }
         if (event.isPresent()) {
-            if (event.get().getState().equals(StateEnum.PUBLISHED)) {
+            if (!event.get().getState().equals(StateEnum.PENDING)) {
                 throw new IncorrectRequestException("Event must not be published");
             } else if (event.get().getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
                 throw new IncorrectDateException("Дата события не соответствует необходимой для изменения");

@@ -1,17 +1,16 @@
-package ru.practicum.server.dto;
+package ru.practicum.server.dto.requestDtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.server.enums.AdminStateActionEnum;
+import ru.practicum.server.enums.PrivateStateActionEnum;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Data
-public class UpdateEventAdminRequestDto {
+public class UpdateEventUserRequestDto {
     @Length(min = 20, max = 2000)
     private String annotation;
     private Long category;
@@ -21,9 +20,10 @@ public class UpdateEventAdminRequestDto {
     @Future
     private LocalDateTime eventDate;
     private Boolean paid;
+    @PositiveOrZero
     private Integer participantLimit;
     private Boolean requestModeration;
-    private AdminStateActionEnum stateAction;
+    private PrivateStateActionEnum stateAction;
     @Length(min = 3, max = 120)
     private String title;
 }

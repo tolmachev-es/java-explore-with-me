@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.server.dto.EventRequestStatusUpdateDto;
-import ru.practicum.server.dto.NewEventDto;
-import ru.practicum.server.dto.UpdateEventUserRequestDto;
+import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
+import ru.practicum.server.dto.eventDtos.NewEventDto;
+import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.service.interfaces.EventService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;

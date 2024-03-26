@@ -1,6 +1,8 @@
-package ru.practicum.server.dto;
+package ru.practicum.server.dto.eventDtos;
 
 import lombok.Data;
+import ru.practicum.server.dto.categoryDtos.CategoryDto;
+import ru.practicum.server.dto.userDtos.UserShortDto;
 
 import java.time.LocalDateTime;
 

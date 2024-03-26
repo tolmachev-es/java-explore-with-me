@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.server.dto.CategoryDto;
-import ru.practicum.server.dto.NewCategoryDto;
+import ru.practicum.server.dto.categoryDtos.CategoryDto;
+import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
 import ru.practicum.server.service.interfaces.EventService;
 
 import javax.validation.Valid;

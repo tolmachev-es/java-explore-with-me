@@ -3,7 +3,14 @@ package ru.practicum.server.service.interfaces;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.server.dto.*;
+import ru.practicum.server.dto.categoryDtos.CategoryDto;
+import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
+import ru.practicum.server.dto.compilationDtos.NewCompilationDto;
+import ru.practicum.server.dto.compilationDtos.UpdateCompilationRequest;
+import ru.practicum.server.dto.eventDtos.NewEventDto;
+import ru.practicum.server.dto.eventDtos.UpdateEventAdminRequestDto;
+import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
+import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.models.AdminFilterParam;
 import ru.practicum.server.models.PublicFilterParam;
 

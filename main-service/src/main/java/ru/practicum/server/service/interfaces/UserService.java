@@ -3,7 +3,7 @@ package ru.practicum.server.service.interfaces;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.server.dto.NewUserRequestDao;
+import ru.practicum.server.dto.userDtos.NewUserRequestDao;
 
 import java.util.List;
 

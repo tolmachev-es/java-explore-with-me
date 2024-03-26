@@ -1,4 +1,4 @@
-package ru.practicum.server.dto;
+package ru.practicum.server.dto.requestDtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonKey;

@@ -2,9 +2,9 @@ package ru.practicum.server.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.server.dto.NewUserRequestDao;
-import ru.practicum.server.dto.UserDto;
-import ru.practicum.server.dto.UserShortDto;
+import ru.practicum.server.dto.userDtos.NewUserRequestDao;
+import ru.practicum.server.dto.userDtos.UserDto;
+import ru.practicum.server.dto.userDtos.UserShortDto;
 import ru.practicum.server.models.User;
 import ru.practicum.server.repository.entities.UserEntity;
 

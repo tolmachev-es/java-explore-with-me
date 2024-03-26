@@ -1,4 +1,4 @@
-package ru.practicum.server.dto;
+package ru.practicum.server.dto.userDtos;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

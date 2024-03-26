@@ -83,4 +83,15 @@ public class MainErrorHandler {
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler({IncorrectRequestException.class})
+    public ResponseEntity<?> handle(final IncorrectRequestException incorrectRequestException) {
+        ApiError apiError = ApiError.builder()
+                .status(String.valueOf(HttpStatus.NOT_FOUND))
+                .reason("Incorrect request exception")
+                .message(incorrectRequestException.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
 }

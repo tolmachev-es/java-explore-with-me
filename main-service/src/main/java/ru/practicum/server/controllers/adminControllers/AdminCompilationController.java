@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.server.dto.NewCompilationDto;
-import ru.practicum.server.dto.UpdateCompilationRequest;
+import ru.practicum.server.dto.compilationDtos.NewCompilationDto;
+import ru.practicum.server.dto.compilationDtos.UpdateCompilationRequest;
 import ru.practicum.server.service.interfaces.EventService;
 
 import javax.validation.Valid;

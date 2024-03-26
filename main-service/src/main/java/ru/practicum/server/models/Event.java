@@ -2,12 +2,11 @@ package ru.practicum.server.models;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.server.dto.LocationDto;
+import ru.practicum.server.dto.eventDtos.LocationDto;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.repository.entities.RequestEntity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

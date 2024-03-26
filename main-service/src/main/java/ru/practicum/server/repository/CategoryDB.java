@@ -1,11 +1,10 @@
 package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.postgresql.util.PSQLException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import ru.practicum.server.dto.CategoryDto;
+import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.models.Category;

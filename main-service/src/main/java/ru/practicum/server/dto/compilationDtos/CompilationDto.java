@@ -1,7 +1,8 @@
-package ru.practicum.server.dto;
+package ru.practicum.server.dto.compilationDtos;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.practicum.server.dto.eventDtos.EventShortDto;
 
 import java.util.List;
 
