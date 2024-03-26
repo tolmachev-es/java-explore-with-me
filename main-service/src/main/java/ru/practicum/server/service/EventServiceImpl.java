@@ -22,6 +22,8 @@ import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.IncorrectDateException;
+import ru.practicum.server.exceptions.IncorrectRequestException;
+import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.mappers.UserMapper;
 import ru.practicum.server.models.*;
@@ -95,7 +97,7 @@ public class EventServiceImpl implements EventService {
             }
         }
         EventFullDto eventFullDto = EventMapper.EVENT_MAPPER.toEventFullDto(
-                eventStorage.updateEvent(event, userId, eventId, nextState));
+                eventStorage.updateEventFromUser(event, userId, eventId, nextState));
         return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }
 
@@ -183,13 +185,13 @@ public class EventServiceImpl implements EventService {
         Event event = eventStorage.getById(eventId);
         request.setEventId(EventMapper.EVENT_MAPPER.toEventEntity(event));
         if (event.getOwner().getId().equals(userId)) {
-            throw new RuntimeException("event service impl create request");
+            throw new IncorrectRequestException("Owner didn't send request to event");
         }
         if (!event.getState().equals(StateEnum.PUBLISHED)) {
-            throw new RuntimeException("event service impl create req 2");
+            throw new IncorrectRequestException("Event must be PUBLISHED");
         }
-        if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() <= event.getRequestEntities().size()) {
-            throw new RuntimeException("Count exception");
+        if (!event.getParticipantLimit().equals(0) && event.getParticipantLimit() >= event.getRequestEntities().size()) {
+            throw new NotFoundException("Not enought places");
         }
         if (event.getRequestModeration().equals(false) || event.getParticipantLimit().equals(0)) {
             request.setConfirmed(RequestStatusEnum.CONFIRMED);
@@ -244,7 +246,7 @@ public class EventServiceImpl implements EventService {
             }
         }
         EventFullDto updateEvent = EventMapper.EVENT_MAPPER.toEventFullDto(
-                eventStorage.updateEvent(event, null, eventId, nextState));
+                eventStorage.updateEventFromAdmin(event, eventId, nextState));
         return new ResponseEntity<>(updateEvent, HttpStatus.OK);
     }
 

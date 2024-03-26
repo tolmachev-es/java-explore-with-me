@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.AlreadyUseException;
 import ru.practicum.server.exceptions.IncorrectDateException;
@@ -127,16 +126,28 @@ public class EventDB {
         }
     }
 
-    public Event updateEvent(Event updateEvent, Long userId, Long eventId, StateEnum stateEnum) {
-        Optional<EventEntity> event;
-        if (userId != null) {
-            event = eventRepository.getEventEntitiesByOwnerIdAndId(userId, eventId);
+    public Event updateEventFromUser(Event updateEvent, Long userId, Long eventId, StateEnum stateEnum) {
+        Optional<EventEntity> event = eventRepository.getEventEntitiesByOwnerIdAndId(userId, eventId);
+        if (event.isPresent()) {
+            if (event.get().getState().equals(StateEnum.PUBLISHED)) {
+                throw new IncorrectRequestException("Event must not be published");
+            } else if (event.get().getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
+                throw new IncorrectDateException("Дата события не соответствует необходимой для изменения");
+            } else {
+                EventEntity eventEntity = setDifferentFields(event.get(), updateEvent, stateEnum);
+                eventRepository.save(eventEntity);
+                return EventMapper.EVENT_MAPPER.fromEventEntity(eventEntity);
+            }
         } else {
-            event = eventRepository.findById(eventId);
+            throw new NotFoundException(String.format("Event with id=%s not found", eventId));
         }
+    }
+
+    public Event updateEventFromAdmin(Event updateEvent, Long eventId, StateEnum stateEnum) {
+        Optional<EventEntity> event = eventRepository.findById(eventId);
         if (event.isPresent()) {
             if (!event.get().getState().equals(StateEnum.PENDING)) {
-                throw new IncorrectRequestException("Event must not be published");
+                throw new IncorrectRequestException("Event must be PENDING");
             } else if (event.get().getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
                 throw new IncorrectDateException("Дата события не соответствует необходимой для изменения");
             } else {

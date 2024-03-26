@@ -10,13 +10,14 @@ import ru.practicum.server.dto.compilationDtos.NewCompilationDto;
 import ru.practicum.server.dto.eventDtos.*;
 import ru.practicum.server.dto.requestDtos.ParticipationRequestDto;
 import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
+import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
 import ru.practicum.server.repository.entities.*;
 
 import java.time.LocalDateTime;
 
-@Mapper(imports = {LocalDateTime.class, LocationDto.class})
+@Mapper(imports = {LocalDateTime.class, LocationDto.class, StateEnum.class})
 public interface EventMapper {
     EventMapper EVENT_MAPPER = Mappers.getMapper(EventMapper.class);
 
@@ -45,7 +46,7 @@ public interface EventMapper {
 
     @Mapping(target = "limit", source = "participantLimit")
     @Mapping(target = "moderation", source = "requestModeration")
-    @Mapping(target = "state", source = "state", defaultValue = "PENDING")
+    @Mapping(target = "state", expression = "java(event.getState() == null ? StateEnum.PENDING : event.getState())")
     @Mapping(target = "locationLat", source = "location.lat")
     @Mapping(target = "locationLon", source = "location.lon")
     EventEntity toEventEntity(Event event);
