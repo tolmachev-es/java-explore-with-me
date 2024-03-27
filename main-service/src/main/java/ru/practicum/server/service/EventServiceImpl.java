@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.client.client.StatsClient;
 import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
 import ru.practicum.server.dto.compilationDtos.CompilationDto;

@@ -1,14 +1,11 @@
 package ru.practicum.server.controllers.publicControllers;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.client.client.StatsClient;
+import ru.practicum.client.StatsClient;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 

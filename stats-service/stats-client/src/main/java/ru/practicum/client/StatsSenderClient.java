@@ -1,4 +1,4 @@
-package ru.practicum.client.client;
+package ru.practicum.client;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
-public class StatsSenderClient implements StatsClient{
+public class StatsSenderClient implements StatsClient {
     private final RestTemplate restTemplate;
     private final String serverUrl;
+
     @Autowired
     public StatsSenderClient(@Value("${stats-server.address}") String serverUrl, RestTemplateBuilder builder) {
         this.serverUrl = serverUrl;
@@ -38,7 +42,7 @@ public class StatsSenderClient implements StatsClient{
                 .ip(request.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build();
-        restTemplate.postForEntity("/hit",hitDto, HitDto.class);
+        restTemplate.postForEntity("/hit", hitDto, HitDto.class);
     }
 
     @Override
