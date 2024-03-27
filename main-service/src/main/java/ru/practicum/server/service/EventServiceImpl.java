@@ -1,11 +1,12 @@
 package ru.practicum.server.service;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.client.client.StatsClient;
 import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
 import ru.practicum.server.dto.compilationDtos.CompilationDto;
@@ -23,7 +24,6 @@ import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.exceptions.IncorrectDateException;
 import ru.practicum.server.exceptions.IncorrectRequestException;
-import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.mappers.UserMapper;
 import ru.practicum.server.models.*;
@@ -55,7 +55,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<?> createNewEvent(NewEventDto newEventDto, Long userid) {
         User user = userStorage.getUserById(userid);
         Event event = EventMapper.EVENT_MAPPER.fromNewEventDto(newEventDto);

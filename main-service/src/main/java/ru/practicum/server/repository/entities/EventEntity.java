@@ -49,4 +49,6 @@ public class EventEntity {
     private Float locationLon;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "eventId")
     private List<RequestEntity> requestEntities = new ArrayList<>(0);
+    @Column(name = "views")
+    private Long views;
 }

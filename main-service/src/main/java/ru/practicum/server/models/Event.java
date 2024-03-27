@@ -34,7 +34,9 @@ public class Event {
         if (requestEntities == null) {
             return 0;
         } else {
-            return requestEntities.stream().filter(e -> e.getConfirmed().equals(RequestStatusEnum.CONFIRMED)).count();
+            return requestEntities.stream()
+                    .filter(e -> e.getConfirmed().equals(RequestStatusEnum.CONFIRMED))
+                    .count();
         }
     }
 }

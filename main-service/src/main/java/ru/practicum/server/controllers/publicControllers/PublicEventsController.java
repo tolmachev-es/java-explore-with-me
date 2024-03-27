@@ -1,13 +1,18 @@
 package ru.practicum.server.controllers.publicControllers;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.client.client.StatsClient;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class PublicEventsController {
     private final EventService eventService;
-
+    private final StatsClient statsClient;
     @GetMapping
     public ResponseEntity<?> getEvents(@RequestParam(name = "text", required = false) String text,
                                        @RequestParam(name = "categories", required = false) List<Long> categories,
@@ -28,7 +33,8 @@ public class PublicEventsController {
                                        @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                        @RequestParam(name = "sort", required = false) PublicFilterParam.SortMethod sort,
                                        @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                       @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                       @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                       HttpServletRequest httpServletRequest) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         PublicFilterParam filterParam = PublicFilterParam.builder()
                 .text(text)
@@ -40,6 +46,7 @@ public class PublicEventsController {
                 .sort(sort)
                 .pageable(PageRequest.of(from / size, size))
                 .build();
+        statsClient.addNewHit("main-service", httpServletRequest);
         log.info("Has new request to get events with filter params {}", filterParam.toString());
         return eventService.getEventsByPublic(filterParam);
     }
