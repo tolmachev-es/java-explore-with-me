@@ -1,11 +1,13 @@
 package ru.practicum.server.controllers.publicControllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.client.StatsClient;
+import ru.practicum.client.StatsSenderClient;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 
@@ -20,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class PublicEventsController {
     private final EventService eventService;
-    private final StatsClient statsClient;
+    private final StatsSenderClient statsClient;
     @GetMapping
     public ResponseEntity<?> getEvents(@RequestParam(name = "text", required = false) String text,
                                        @RequestParam(name = "categories", required = false) List<Long> categories,
@@ -41,7 +43,8 @@ public class PublicEventsController {
                 .end(rangeEnd == null ? null : LocalDateTime.parse(rangeEnd, formatter))
                 .available(onlyAvailable)
                 .sort(sort)
-                .pageable(PageRequest.of(from / size, size))
+                .from(from)
+                .size(size)
                 .build();
         statsClient.addNewHit("main-service", httpServletRequest);
         log.info("Has new request to get events with filter params {}", filterParam.toString());
@@ -49,7 +52,9 @@ public class PublicEventsController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<?> getEventById(@PathVariable(name = "eventId") Long eventId) {
+    public ResponseEntity<?> getEventById(@PathVariable(name = "eventId") Long eventId,
+                                          HttpServletRequest request) {
+        statsClient.addNewHit("main-service", request);
         log.info("Has new request to get event with id {}", eventId);
         return eventService.getEventByIdPublic(eventId);
     }

@@ -1,6 +1,7 @@
 package ru.practicum.server.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -180,13 +181,26 @@ public class EventDB {
     }
 
     public List<Event> getEventsByPublicFilter(PublicFilterParam publicFilterParam) {
-        if (publicFilterParam.getEnd().isBefore(publicFilterParam.getStart())) {
-            throw new IncorrectSearchDate("End date before start date");
+        if (publicFilterParam.getEnd() != null && publicFilterParam.getStart() != null) {
+            if (publicFilterParam.getEnd().isBefore(publicFilterParam.getStart())) {
+                throw new IncorrectSearchDate("End date before start date");
+            }
         }
-        Sort sort = Sort.by("ID");
-        if (publicFilterParam.getSort() != null) {
-            sort = Sort.by(String.valueOf(publicFilterParam.getSort()));
+        Sort sort = null;
+        if (publicFilterParam.getSort() == null) {
+            sort = Sort.by("id");
+        } else {
+            switch (publicFilterParam.getSort()) {
+                case VIEWS:
+                    sort = Sort.by("views");
+                    break;
+                case EVENT_DATE:
+                    sort = Sort.by("eventDate");
+                    break;
+            }
         }
+        Pageable pageable = PageRequest.of(publicFilterParam.getFrom() / publicFilterParam.getSize(),
+                publicFilterParam.getSize(), sort);
         Specification<EventEntity> specification = Specification
                 .where(textSpecification(publicFilterParam.getText()))
                 .and(categorySpecification(publicFilterParam.getCategories()))
@@ -196,7 +210,7 @@ public class EventDB {
                         startSpecification(LocalDateTime.now()) : startSpecification(publicFilterParam.getStart()))
                 .and((publicFilterParam.getStart() == null || publicFilterParam.getEnd() == null) ? null :
                         endSpecification(publicFilterParam.getEnd()));
-        return eventRepository.findAll(specification, publicFilterParam.getPageable())
+        return eventRepository.findAll(specification, pageable)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::fromEventEntity)
                 .collect(Collectors.toList());
@@ -205,7 +219,10 @@ public class EventDB {
     public Event getEventByIdAndStatusPublished(Long eventId) {
         Optional<EventEntity> eventEntity = eventRepository.getEventEntityByIdAndState(eventId, StateEnum.PUBLISHED);
         if (eventEntity.isPresent()) {
-            return EventMapper.EVENT_MAPPER.fromEventEntity(eventEntity.get());
+            EventEntity event = eventEntity.get();
+            event.setViews(event.getViews() + 1);
+            eventRepository.save(eventEntity.get());
+            return EventMapper.EVENT_MAPPER.fromEventEntity(event);
         } else {
             throw new NotFoundException(String.format("Event with id %s not found", eventId));
         }

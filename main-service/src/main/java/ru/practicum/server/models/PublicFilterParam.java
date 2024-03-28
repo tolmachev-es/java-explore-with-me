@@ -17,7 +17,8 @@ public class PublicFilterParam {
     private LocalDateTime end;
     private Boolean available;
     private SortMethod sort;
-    private Pageable pageable;
+    private Integer from;
+    private Integer size;
 
     public enum SortMethod {EVENT_DATE, VIEWS};
 }

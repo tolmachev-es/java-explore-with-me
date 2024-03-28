@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.client.StatsClient;
+import ru.practicum.client.models.ViewStatsDto;
 import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
 import ru.practicum.server.dto.compilationDtos.CompilationDto;
@@ -31,8 +33,9 @@ import ru.practicum.server.repository.entities.RequestEntity;
 import ru.practicum.server.service.interfaces.EventService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final UserDB userStorage;
     private final RequestDB requestStorage;
     private final CompilationDB compilationStorage;
+    private final StatsClient statsClient;
 
     @Override
     public ResponseEntity<?> getByUserId(Long userId, Pageable pageable) {
@@ -59,6 +63,7 @@ public class EventServiceImpl implements EventService {
         Event event = EventMapper.EVENT_MAPPER.fromNewEventDto(newEventDto);
         event.setCategory(categoryStorage.getCategoryById(newEventDto.getCategory()));
         event.setOwner(user);
+        event.setViews(0);
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
             throw new IncorrectDateException("Должно содержать дату, которая еще не наступила");
         } else {
@@ -178,6 +183,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public ResponseEntity<?> createRequest(Long userId, Long eventId) {
         RequestEntity request = new RequestEntity();
+        request.setCreated(LocalDateTime.now());
         User user = userStorage.getUserById(userId);
         request.setUserId(UserMapper.USER_MAPPER.toEntity(user));
         Event event = eventStorage.getById(eventId);
@@ -196,7 +202,6 @@ public class EventServiceImpl implements EventService {
         } else {
             request.setConfirmed(RequestStatusEnum.PENDING);
         }
-        request.setCreated(LocalDateTime.now());
         ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER.fromRequestEntity(
                 requestStorage.createNewRequest(request));
         return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
@@ -287,7 +292,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam) {
-        List<EventShortDto> events = eventStorage.getEventsByPublicFilter(filterParam).stream()
+        List<EventShortDto> events = addStatistic(eventStorage.getEventsByPublicFilter(filterParam))
+                .stream()
                 .map(EventMapper.EVENT_MAPPER::toEventShortDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(events, HttpStatus.OK);
@@ -295,8 +301,37 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> getEventByIdPublic(Long eventId) {
-        Event event = eventStorage.getEventByIdAndStatusPublished(eventId);
+        Event event = addStatistic(List.of(eventStorage.getEventByIdAndStatusPublished(eventId)))
+                .get(0);
         return new ResponseEntity<>(EventMapper.EVENT_MAPPER.toEventFullDto(event), HttpStatus.OK);
     }
 
+    private List<Event> addStatistic(List<Event> events) {
+        Pattern pattern = Pattern.compile("/events/(\\d+)$");
+
+        List<String> newUris = events.stream()
+                .map(s -> String.format("/events/%s", s.getId()))
+                .collect(Collectors.toList());
+        LocalDateTime startTime = events.stream().min(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return o1.getCreatedOn().compareTo(o2.getCreatedOn());
+            }
+        }).get().getCreatedOn();
+
+        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startTime, LocalDateTime.now(), newUris, true);
+        Map<Long, Integer> statistic = new HashMap<>();
+        for (ViewStatsDto viewStatsDto: viewStatsDtos) {
+            Matcher matcher = pattern.matcher(viewStatsDto.getUri());
+            if (matcher.find()) {
+                String id = matcher.group(1);
+                statistic.put(Long.parseLong(id), viewStatsDto.getHits());
+            }
+
+        }
+        for (Event event: events) {
+            event.setViews(statistic.get(event.getId()));
+        }
+        return events;
+    }
 }

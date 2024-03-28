@@ -2,6 +2,7 @@ package ru.practicum.client.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class HitDto {
     private Long id;
     @NotBlank

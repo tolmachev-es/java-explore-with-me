@@ -52,6 +52,8 @@ public interface EventMapper {
     EventEntity toEventEntity(Event event);
 
     @Mapping(target = "initiator", source = "owner")
+    @Mapping(target = "confirmedRequests", expression = "java(event.getCountConfirmedRequests())")
+    @Mapping(target = "views", expression = "java(event.getViews() == null ? 0 : event.getViews())")
     EventFullDto toEventFullDto(Event event);
 
     @Mapping(target = "initiator", source = "owner")
