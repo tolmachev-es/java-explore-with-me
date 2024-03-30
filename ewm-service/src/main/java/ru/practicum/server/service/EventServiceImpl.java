@@ -141,7 +141,7 @@ public class EventServiceImpl implements EventService {
                 .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
                 .collect(Collectors.toList());
         EventRequestStatusUpdateResult eventRequestStatusUpdateRequest = new EventRequestStatusUpdateResult();
-        for (ParticipationRequestDto requestDto: listToReturn) {
+        for (ParticipationRequestDto requestDto : listToReturn) {
             if (requestDto.getState().equals(RequestStatusEnum.CONFIRMED)) {
                 eventRequestStatusUpdateRequest.getConfirmedRequests().add(requestDto);
             } else {

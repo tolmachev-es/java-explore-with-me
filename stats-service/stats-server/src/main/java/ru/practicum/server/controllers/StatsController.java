@@ -2,11 +2,9 @@ package ru.practicum.server.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.models.HitDto;
-import ru.practicum.client.models.ViewStatsDto;
 import ru.practicum.server.service.StatsService;
 
 import javax.validation.constraints.NotNull;
@@ -29,9 +27,9 @@ public class StatsController {
 
     @GetMapping("/stats")
     ResponseEntity<?> getStats(@RequestParam @NotNull String start,
-                                @RequestParam @NotNull String end,
-                                @RequestParam(required = false) List<String> uris,
-                                @RequestParam(defaultValue = "false") String unique) {
+                               @RequestParam @NotNull String end,
+                               @RequestParam(required = false) List<String> uris,
+                               @RequestParam(defaultValue = "false") String unique) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         boolean unic = Boolean.parseBoolean(unique);
         return service.getStats(LocalDateTime.parse(URLDecoder.decode(start, Charset.defaultCharset()), formatter),
