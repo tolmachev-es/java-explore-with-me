@@ -82,7 +82,7 @@ public class CompilationDB {
         if (request.getPinned() != null) {
             compilation.setPinned(request.getPinned());
         }
-        if (!request.getTitle().isBlank()) {
+        if (request.getTitle() != null) {
             compilation.setTitle(request.getTitle());
         }
         if (request.getEvents() != null) {

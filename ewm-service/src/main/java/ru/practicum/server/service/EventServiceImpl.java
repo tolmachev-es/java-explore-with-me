@@ -271,8 +271,7 @@ public class EventServiceImpl implements EventService {
     public ResponseEntity<?> getCompilationById(Long compId) {
         CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
                 compilationStorage.getCompilationById(compId));
-
-        return new ResponseEntity<>(compilationDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }
 
     @Override
