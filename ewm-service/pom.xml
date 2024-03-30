@@ -8,9 +8,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>main-service</artifactId>
+    <artifactId>ewm-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>main-service</name>
+    <name>ewm-service</name>
 
     <properties>
         <mapstruct.version>1.5.5.Final</mapstruct.version>

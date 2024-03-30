@@ -24,12 +24,11 @@ public class StatsController {
 
     @PostMapping("/hit")
     ResponseEntity<?> addStatistic(@RequestBody HitDto hitDto) {
-        service.addStatistic(hitDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return service.addStatistic(hitDto);
     }
 
     @GetMapping("/stats")
-    List<ViewStatsDto> getStats(@RequestParam @NotNull String start,
+    ResponseEntity<?> getStats(@RequestParam @NotNull String start,
                                 @RequestParam @NotNull String end,
                                 @RequestParam(required = false) List<String> uris,
                                 @RequestParam(defaultValue = "false") String unique) {
