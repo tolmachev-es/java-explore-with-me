@@ -2,31 +2,50 @@ version: '3.1'
 services:
   stats-server:
     build: stats-service
+    container_name: stats-service
     ports:
       - "9090:9090"
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stat_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats_db:5432/stat_db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
   stats-db:
     image: postgres:14-alpine
-    container_name: 'stats_db'
+    container_name: stats_db
     ports:
       - "6541:5432"
     environment:
       - POSTGRES_DB=stat_db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - PGDATA=/var/lib/postgresql/data1
+      - DB_HOST=localhost
+      - DB_PORT=5432
 
   ewm-db:
     image: postgres:14-alpine
-    container_name: 'event_db'
+    container_name: event_db
     ports:
       - "6542:5432"
     environment:
+      - PGDATA=/var/lib/postgresql/data2
       - POSTGRES_DB=event_db
+      - POSTGRES_USER=root1
+      - POSTGRES_PASSWORD=root1
+      - DB_HOST=localhost
+      - DB_PORT=5432
+
+  main-service:
+    build: main-service
+    container_name: event-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://event_db:5432/event_db
       - POSTGRES_USER=root1
       - POSTGRES_PASSWORD=root1
