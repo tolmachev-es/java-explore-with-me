@@ -68,6 +68,6 @@ public class PrivateEventController {
                                           @PathVariable(name = "userId") Long userId,
                                           @PathVariable(name = "eventId") Long eventId) {
         log.info("Has new request to update request status for event with id {}", eventId);
-        return eventService.changeStatusForEvent(eventRequestStatusUpdateDto, userId, eventId);
+        return eventService.changeStatusForEventRequests(eventRequestStatusUpdateDto, userId, eventId);
     }
 }

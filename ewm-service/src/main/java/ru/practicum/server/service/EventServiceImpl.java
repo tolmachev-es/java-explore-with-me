@@ -114,9 +114,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public ResponseEntity<?> changeStatusForEvent(EventRequestStatusUpdateDto requestStatusUpdateDto,
-                                                  Long userId,
-                                                  Long eventId) {
+    public ResponseEntity<?> changeStatusForEventRequests(EventRequestStatusUpdateDto requestStatusUpdateDto,
+                                                          Long userId,
+                                                          Long eventId) {
         Event event = eventStorage.getById(eventId);
         List<RequestEntity> resultList = new ArrayList<>();
         if (!event.getOwner().getId().equals(userId)) {
@@ -140,9 +140,15 @@ public class EventServiceImpl implements EventService {
         List<ParticipationRequestDto> listToReturn = resultList.stream()
                 .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
                 .collect(Collectors.toList());
-        EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
-        eventRequestStatusUpdateResult.setConfirmedRequest(listToReturn);
-        return new ResponseEntity<>(eventRequestStatusUpdateResult, HttpStatus.OK);
+        EventRequestStatusUpdateResult eventRequestStatusUpdateRequest = new EventRequestStatusUpdateResult();
+        for (ParticipationRequestDto requestDto: listToReturn) {
+            if (requestDto.getState().equals(RequestStatusEnum.CONFIRMED)) {
+                eventRequestStatusUpdateRequest.getConfirmedRequests().add(requestDto);
+            } else {
+                eventRequestStatusUpdateRequest.getRejectedRequests().add(requestDto);
+            }
+        }
+        return new ResponseEntity<>(eventRequestStatusUpdateRequest, HttpStatus.OK);
     }
 
     @Override

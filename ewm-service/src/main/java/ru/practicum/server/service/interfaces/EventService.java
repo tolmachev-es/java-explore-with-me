@@ -26,7 +26,7 @@ public interface EventService {
 
     ResponseEntity<?> getRequestByEvent(Long userId, Long eventId);
 
-    ResponseEntity<?> changeStatusForEvent(EventRequestStatusUpdateDto requestIntegerStatusUpdateDto, Long userId, Long eventId);
+    ResponseEntity<?> changeStatusForEventRequests(EventRequestStatusUpdateDto requestIntegerStatusUpdateDto, Long userId, Long eventId);
 
     ResponseEntity<?> createCategory(NewCategoryDto newCategoryDto);
 
