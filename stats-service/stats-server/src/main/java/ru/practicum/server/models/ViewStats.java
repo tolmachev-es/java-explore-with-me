@@ -18,7 +18,8 @@ public class ViewStats {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ViewStats viewStats = (ViewStats) o;
-        return Objects.equals(app, viewStats.app) && Objects.equals(uri, viewStats.uri); }
+        return Objects.equals(app, viewStats.app) && Objects.equals(uri, viewStats.uri);
+    }
 
     @Override
     public int hashCode() {
