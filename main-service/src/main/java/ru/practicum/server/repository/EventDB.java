@@ -20,7 +20,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.validation.ConstraintViolationException;
-import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -98,6 +97,7 @@ public class EventDB {
             return null;
         };
     }
+
     @Transactional
     public Event createEvent(Event event) {
         EventEntity eventEntity = EventMapper.EVENT_MAPPER.toEventEntity(event);
@@ -242,7 +242,7 @@ public class EventDB {
             event.setCategory(EventMapper.EVENT_MAPPER.toCategoryEntity(newEvent.getCategory()));
         }
         if (newEvent.getDescription() != null) {
-            event.setDescription(event.getDescription());
+            event.setDescription(newEvent.getDescription());
         }
         if (newEvent.getEventDate() != null) {
             if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {

@@ -3,7 +3,6 @@ package ru.practicum.server.models;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.server.enums.RequestStatusEnum;
 import ru.practicum.server.enums.StateEnum;
 
 import java.time.LocalDateTime;

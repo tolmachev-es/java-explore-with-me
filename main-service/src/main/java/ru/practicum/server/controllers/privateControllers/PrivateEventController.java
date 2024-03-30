@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
 import ru.practicum.server.dto.eventDtos.NewEventDto;
+import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
 import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.service.interfaces.EventService;
 
@@ -65,8 +65,8 @@ public class PrivateEventController {
 
     @PatchMapping("/{userId}/events/{eventId}/requests")
     ResponseEntity<?> updateRequestStatus(@Valid @RequestBody EventRequestStatusUpdateDto eventRequestStatusUpdateDto,
-                                        @PathVariable(name = "userId") Long userId,
-                                        @PathVariable(name = "eventId") Long eventId) {
+                                          @PathVariable(name = "userId") Long userId,
+                                          @PathVariable(name = "eventId") Long eventId) {
         log.info("Has new request to update request status for event with id {}", eventId);
         return eventService.changeStatusForEvent(eventRequestStatusUpdateDto, userId, eventId);
     }

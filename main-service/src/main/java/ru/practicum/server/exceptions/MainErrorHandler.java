@@ -63,7 +63,6 @@ public class MainErrorHandler {
     }
 
 
-
     @ExceptionHandler({IncorrectDateException.class})
     public ResponseEntity<?> handle(final IncorrectDateException incorrectDateException) {
         ApiError apiError = ApiError.builder()

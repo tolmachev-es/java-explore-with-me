@@ -321,7 +321,7 @@ public class EventServiceImpl implements EventService {
 
         List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startTime, LocalDateTime.now(), newUris, true);
         Map<Long, Integer> statistic = new HashMap<>();
-        for (ViewStatsDto viewStatsDto: viewStatsDtos) {
+        for (ViewStatsDto viewStatsDto : viewStatsDtos) {
             Matcher matcher = pattern.matcher(viewStatsDto.getUri());
             if (matcher.find()) {
                 String id = matcher.group(1);
@@ -329,7 +329,7 @@ public class EventServiceImpl implements EventService {
             }
 
         }
-        for (Event event: events) {
+        for (Event event : events) {
             event.setViews(statistic.get(event.getId()));
         }
         return events;

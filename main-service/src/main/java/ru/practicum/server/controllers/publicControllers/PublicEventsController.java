@@ -1,10 +1,7 @@
 package ru.practicum.server.controllers.publicControllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.StatsSenderClient;
@@ -23,6 +20,7 @@ import java.util.List;
 public class PublicEventsController {
     private final EventService eventService;
     private final StatsSenderClient statsClient;
+
     @GetMapping
     public ResponseEntity<?> getEvents(@RequestParam(name = "text", required = false) String text,
                                        @RequestParam(name = "categories", required = false) List<Long> categories,

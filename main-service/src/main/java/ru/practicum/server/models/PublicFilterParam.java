@@ -2,7 +2,6 @@ package ru.practicum.server.models;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,5 +19,7 @@ public class PublicFilterParam {
     private Integer from;
     private Integer size;
 
-    public enum SortMethod {EVENT_DATE, VIEWS};
+    public enum SortMethod {EVENT_DATE, VIEWS}
+
+    ;
 }

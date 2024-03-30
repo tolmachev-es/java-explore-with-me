@@ -6,8 +6,6 @@ import org.hibernate.validator.constraints.Length;
 import ru.practicum.server.enums.AdminStateActionEnum;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
 @Data

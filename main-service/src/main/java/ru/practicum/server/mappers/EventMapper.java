@@ -13,7 +13,10 @@ import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.models.Category;
 import ru.practicum.server.models.Event;
-import ru.practicum.server.repository.entities.*;
+import ru.practicum.server.repository.entities.CategoryEntity;
+import ru.practicum.server.repository.entities.CompilationEntity;
+import ru.practicum.server.repository.entities.EventEntity;
+import ru.practicum.server.repository.entities.RequestEntity;
 
 import java.time.LocalDateTime;
 
