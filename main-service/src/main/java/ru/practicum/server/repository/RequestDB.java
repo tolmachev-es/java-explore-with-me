@@ -27,14 +27,13 @@ public class RequestDB {
         return request;
     }
 
-    public Long countGuest(Long eventId) {
-        return repository.countAllByEventId_Id(eventId);
-    }
-
-    public void removeRequest(Long requestId, Long userId) {
+    public RequestEntity removeRequest(Long requestId, Long userId) {
         Optional<RequestEntity> request = repository.findByIdAndUserId_Id(requestId, userId);
         if (request.isPresent()) {
-            repository.delete(request.get());
+            RequestEntity requestEntity = request.get();
+            requestEntity.setConfirmed(RequestStatusEnum.CANCELED);
+            repository.save(requestEntity);
+            return requestEntity;
         } else {
             throw new NotFoundException("Не найден реквест");
         }

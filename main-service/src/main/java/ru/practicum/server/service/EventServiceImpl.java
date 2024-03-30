@@ -218,8 +218,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseEntity<?> removeRequest(Long requestId, Long userId) {
-        requestStorage.removeRequest(requestId, userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER
+                .fromRequestEntity(requestStorage.removeRequest(requestId, userId));
+        return new ResponseEntity<>(requestDto, HttpStatus.OK);
     }
 
     @Override
