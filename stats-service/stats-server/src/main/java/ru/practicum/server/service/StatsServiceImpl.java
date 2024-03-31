@@ -38,7 +38,7 @@ public class StatsServiceImpl implements StatsService {
                     .stream()
                     .map(StatMapper.STAT_MAPPER::fromProjections)
                     .map(v -> StatMapper.STAT_MAPPER.viewToDto(v, unique))
-                    .sorted(Comparator.comparing(ViewStatsDto::getHits))
+                    .sorted(Comparator.comparing(ViewStatsDto::getHits).reversed())
                     .collect(Collectors.toList());
         }
     }
