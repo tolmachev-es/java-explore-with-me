@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MainErrorHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    public ResponseEntity<?> handle(final Exception ex) {
+    public ResponseEntity<ApiError> handle(final Exception ex) {
         Map<String, String> error = new HashMap<>();
         if (ex instanceof MethodArgumentNotValidException) {
             BindingResult bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
@@ -41,7 +41,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({AlreadyUseException.class})
-    public ResponseEntity<?> handle(final AlreadyUseException already) {
+    public ResponseEntity<ApiError> handle(final AlreadyUseException already) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.CONFLICT))
                 .reason("Integrity constraint has been violated.")
@@ -52,7 +52,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<?> handle(final NotFoundException notFoundException) {
+    public ResponseEntity<ApiError> handle(final NotFoundException notFoundException) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.NOT_FOUND))
                 .reason("The required object was not found")
@@ -64,7 +64,7 @@ public class MainErrorHandler {
 
 
     @ExceptionHandler({IncorrectDateException.class})
-    public ResponseEntity<?> handle(final IncorrectDateException incorrectDateException) {
+    public ResponseEntity<ApiError> handle(final IncorrectDateException incorrectDateException) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.NOT_FOUND))
                 .reason("Incorrect date exception")
@@ -75,7 +75,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({PSQLException.class})
-    public ResponseEntity<?> handle(final PSQLException psqlException) {
+    public ResponseEntity<ApiError> handle(final PSQLException psqlException) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.CONFLICT))
                 .reason("Duplicate value in database")
@@ -86,7 +86,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({IncorrectRequestException.class})
-    public ResponseEntity<?> handle(final IncorrectRequestException incorrectRequestException) {
+    public ResponseEntity<ApiError> handle(final IncorrectRequestException incorrectRequestException) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.CONFLICT))
                 .reason("Incorrect request exception")
@@ -97,7 +97,7 @@ public class MainErrorHandler {
     }
 
     @ExceptionHandler({IncorrectSearchDate.class})
-    public ResponseEntity<?> handle(final IncorrectSearchDate incorrectSearchDate) {
+    public ResponseEntity<ApiError> handle(final IncorrectSearchDate incorrectSearchDate) {
         ApiError apiError = ApiError.builder()
                 .status(String.valueOf(HttpStatus.BAD_REQUEST))
                 .reason("Incorrect search date")

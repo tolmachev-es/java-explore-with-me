@@ -3,8 +3,8 @@ package ru.practicum.server.repository.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -24,5 +24,5 @@ public class CompilationEntity {
             joinColumns = @JoinColumn(name = "COMPILATION_ID"),
             inverseJoinColumns = @JoinColumn(name = "EVENT_ID")
     )
-    private List<EventEntity> eventEntities = new ArrayList<>();
+    private Set<EventEntity> eventEntities = new HashSet<>();
 }

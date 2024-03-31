@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.dto.compilationDtos.NewCompilationDto;
 import ru.practicum.server.dto.compilationDtos.UpdateCompilationRequest;
 import ru.practicum.server.exceptions.NotFoundException;
@@ -11,13 +12,11 @@ import ru.practicum.server.mappers.EventMapper;
 import ru.practicum.server.repository.entities.CompilationEntity;
 import ru.practicum.server.repository.entities.EventEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class CompilationDB {
+public class CompilationDao {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
 
@@ -28,6 +27,7 @@ public class CompilationDB {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("pinned"), pinned);
     }
 
+    @Transactional
     public CompilationEntity getCompilationById(Long id) {
         Optional<CompilationEntity> compilationEntity = compilationRepository.findById(id);
         if (compilationEntity.isPresent()) {
@@ -37,11 +37,13 @@ public class CompilationDB {
         }
     }
 
+    @Transactional
     public List<CompilationEntity> getPageableCompilations(Boolean pinned, Pageable pageable) {
         Specification<CompilationEntity> specification = Specification.where(hasPinned(pinned));
         return compilationRepository.findAll(specification, pageable).toList();
     }
 
+    @Transactional
     public CompilationEntity createCompilation(NewCompilationDto newCompilationDto) {
         CompilationEntity compilationEntity = EventMapper.EVENT_MAPPER
                 .toCompilationEntityFromNewCompilationDto(newCompilationDto);
@@ -50,10 +52,12 @@ public class CompilationDB {
         return compilationEntity;
     }
 
+    @Transactional
     public void removeById(Long id) {
         compilationRepository.delete(getCompilationById(id));
     }
 
+    @Transactional
     public CompilationEntity updateCompilation(UpdateCompilationRequest request, Long compilationId) {
         CompilationEntity compilationEntity = setDifferentField(
                 request, compilationRepository.getReferenceById(compilationId));
@@ -61,10 +65,10 @@ public class CompilationDB {
         return compilationEntity;
     }
 
-    private List<EventEntity> getAllEvents(List<Long> events) {
+    private Set<EventEntity> getAllEvents(List<Long> events) {
         List<EventEntity> eventEntities = new ArrayList<>();
         if (events == null) {
-            return eventEntities;
+            return new HashSet<>(eventEntities);
         } else {
             Specification<EventEntity> eventEntitySpecification = Specification
                     .where((root, query, criteriaBuilder) -> root.get("id").in(events));
@@ -72,7 +76,7 @@ public class CompilationDB {
             if (eventEntities.size() < events.size()) {
                 throw new NotFoundException("NOT FOUND");
             } else {
-                return eventEntities;
+                return new HashSet<>(eventEntities);
             }
         }
 

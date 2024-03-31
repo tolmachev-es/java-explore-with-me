@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.EventMapper;
@@ -16,15 +17,17 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class CategoryDB {
+public class CategoryDao {
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     public Category createCategory(Category category) {
         CategoryEntity categoryEntity = EventMapper.EVENT_MAPPER.toCategoryEntity(category);
         categoryRepository.save(categoryEntity);
         return EventMapper.EVENT_MAPPER.fromCategoryEntity(categoryEntity);
     }
 
+    @Transactional
     public Category getCategoryById(Long catId) {
         Optional<CategoryEntity> category = categoryRepository.findById(catId);
         if (category.isPresent()) {
@@ -34,6 +37,7 @@ public class CategoryDB {
         }
     }
 
+    @Transactional
     public Category updateCategory(CategoryDto categoryDto, Long categoryId) {
         Optional<CategoryEntity> oldCategory = categoryRepository.findById(categoryId);
         if (oldCategory.isPresent()) {
@@ -45,6 +49,7 @@ public class CategoryDB {
         }
     }
 
+    @Transactional
     public void deleteCategory(Long categoryId) {
         try {
             categoryRepository.deleteById(categoryId);
@@ -53,6 +58,7 @@ public class CategoryDB {
         }
     }
 
+    @Transactional
     public List<Category> getPageableCategory(Pageable pageable) {
         return categoryRepository.findAll(pageable)
                 .toList()

@@ -14,19 +14,21 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class RequestDB {
+public class RequestDao {
     private final RequestRepository repository;
 
+    @Transactional
     public List<RequestEntity> getByUserId(Long userId) {
         return repository.getAllByUserId_Id(userId);
     }
 
-
+    @Transactional
     public RequestEntity createNewRequest(RequestEntity request) {
         repository.save(request);
         return request;
     }
 
+    @Transactional
     public RequestEntity removeRequest(Long requestId, Long userId) {
         Optional<RequestEntity> request = repository.findByIdAndUserId_Id(requestId, userId);
         if (request.isPresent()) {
@@ -39,10 +41,12 @@ public class RequestDB {
         }
     }
 
+    @Transactional
     public List<RequestEntity> getRequestsByEvent(Long eventId) {
         return repository.getAllByEventId_Id(eventId);
     }
 
+    @Transactional
     public List<RequestEntity> getByIds(Long[] requestIds) {
         return repository.getAllByIdIn(List.of(requestIds));
     }
@@ -80,6 +84,7 @@ public class RequestDB {
         }
         return requestEntities;
     }
+
 
     private List<RequestEntity> confirmRequests(Long[] requestsIds) {
         List<RequestEntity> requestEntities = repository.getAllByIdInAndConfirmed(

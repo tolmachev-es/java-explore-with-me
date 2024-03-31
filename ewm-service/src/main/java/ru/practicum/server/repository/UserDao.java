@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.exceptions.AlreadyUseException;
 import ru.practicum.server.exceptions.NotFoundException;
 import ru.practicum.server.mappers.UserMapper;
@@ -18,9 +19,10 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class UserDB {
+public class UserDao {
     private final UserRepository userRepository;
 
+    @Transactional
     public User createNewUser(User user) {
         UserEntity userEntity = UserMapper.USER_MAPPER.toEntity(user);
         try {
@@ -31,6 +33,7 @@ public class UserDB {
         }
     }
 
+    @Transactional
     public List<User> getUsers(List<Long> userIds, Pageable pageable) {
         Specification<UserEntity> specification = Specification
                 .where(userIds.isEmpty() ? null :
@@ -40,6 +43,7 @@ public class UserDB {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void removeUserById(long userId) {
         try {
             userRepository.deleteById(userId);
@@ -48,6 +52,7 @@ public class UserDB {
         }
     }
 
+    @Transactional
     public User getUserById(long userId) {
         Optional<UserEntity> user = userRepository.findById(userId);
         if (user.isPresent()) {

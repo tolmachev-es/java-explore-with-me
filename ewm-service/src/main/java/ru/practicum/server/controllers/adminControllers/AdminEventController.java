@@ -3,9 +3,11 @@ package ru.practicum.server.controllers.adminControllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.server.dto.eventDtos.EventFullDto;
 import ru.practicum.server.dto.eventDtos.UpdateEventAdminRequestDto;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.models.AdminFilterParam;
@@ -26,13 +28,13 @@ public class AdminEventController {
     private final EventService eventService;
 
     @GetMapping
-    ResponseEntity<?> getEvents(@RequestParam(name = "users", required = false) List<Long> users,
-                                @RequestParam(name = "states", required = false) List<String> states,
-                                @RequestParam(name = "categories", required = false) List<Long> categories,
-                                @RequestParam(name = "rangeStart", required = false) String rangeStart,
-                                @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
-                                @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                @RequestParam(name = "size", defaultValue = "10") Integer size) {
+    public ResponseEntity<List<EventFullDto>> getEvents(@RequestParam(name = "users", required = false) List<Long> users,
+                                                        @RequestParam(name = "states", required = false) List<String> states,
+                                                        @RequestParam(name = "categories", required = false) List<Long> categories,
+                                                        @RequestParam(name = "rangeStart", required = false) String rangeStart,
+                                                        @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
+                                                        @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                        @RequestParam(name = "size", defaultValue = "10") Integer size) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         AdminFilterParam adminFilterParam = AdminFilterParam.builder()
                 .users(users)
@@ -43,13 +45,13 @@ public class AdminEventController {
                 .pageable(PageRequest.of(from / size, size))
                 .build();
         log.info("Has new request for search events with parameters {}", adminFilterParam.toString());
-        return eventService.getEvents(adminFilterParam);
+        return new ResponseEntity<>(eventService.getEvents(adminFilterParam), HttpStatus.OK);
     }
 
     @PatchMapping("/{eventId}")
-    ResponseEntity<?> updateEvent(@Valid @RequestBody UpdateEventAdminRequestDto requestDto,
-                                  @PathVariable(name = "eventId") Long eventId) {
+    public ResponseEntity<EventFullDto> updateEvent(@Valid @RequestBody UpdateEventAdminRequestDto requestDto,
+                                                    @PathVariable(name = "eventId") Long eventId) {
         log.info("Has new request to update event with id {}", eventId);
-        return eventService.updateEventByAdmin(eventId, requestDto);
+        return new ResponseEntity<>(eventService.updateEventByAdmin(eventId, requestDto), HttpStatus.OK);
     }
 }

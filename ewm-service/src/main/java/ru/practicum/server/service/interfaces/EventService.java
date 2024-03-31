@@ -1,64 +1,71 @@
 package ru.practicum.server.service.interfaces;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.dto.categoryDtos.CategoryDto;
 import ru.practicum.server.dto.categoryDtos.NewCategoryDto;
+import ru.practicum.server.dto.compilationDtos.CompilationDto;
 import ru.practicum.server.dto.compilationDtos.NewCompilationDto;
 import ru.practicum.server.dto.compilationDtos.UpdateCompilationRequest;
+import ru.practicum.server.dto.eventDtos.EventFullDto;
+import ru.practicum.server.dto.eventDtos.EventShortDto;
 import ru.practicum.server.dto.eventDtos.NewEventDto;
 import ru.practicum.server.dto.eventDtos.UpdateEventAdminRequestDto;
 import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
+import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateResult;
+import ru.practicum.server.dto.requestDtos.ParticipationRequestDto;
 import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.models.AdminFilterParam;
 import ru.practicum.server.models.PublicFilterParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 @Service
 public interface EventService {
-    ResponseEntity<?> getByUserId(Long userId, Pageable pageable);
+    List<EventShortDto> getByUserId(Long userId, Pageable pageable);
 
-    ResponseEntity<?> createNewEvent(NewEventDto newEventDto, Long userid);
+    EventFullDto createNewEvent(NewEventDto newEventDto, Long userid);
 
-    ResponseEntity<?> getByEventId(Long userId, Long eventId);
+    EventFullDto getByEventId(Long userId, Long eventId);
 
-    ResponseEntity<?> updateEvent(UpdateEventUserRequestDto updateEvent, Long userId, Long eventId);
+    EventFullDto updateEvent(UpdateEventUserRequestDto updateEvent, Long userId, Long eventId);
 
-    ResponseEntity<?> getRequestByEvent(Long userId, Long eventId);
+    List<ParticipationRequestDto> getRequestByEvent(Long userId, Long eventId);
 
-    ResponseEntity<?> changeStatusForEventRequests(EventRequestStatusUpdateDto requestIntegerStatusUpdateDto, Long userId, Long eventId);
+    EventRequestStatusUpdateResult changeStatusForEventRequests(EventRequestStatusUpdateDto requestIntegerStatusUpdateDto, Long userId, Long eventId);
 
-    ResponseEntity<?> createCategory(NewCategoryDto newCategoryDto);
+    CategoryDto createCategory(NewCategoryDto newCategoryDto);
 
-    ResponseEntity<?> removeCategory(Long categoryId);
+    void removeCategory(Long categoryId);
 
-    ResponseEntity<?> updateCategory(CategoryDto categoryDto, Long categoryId);
+    CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId);
 
-    ResponseEntity<?> getPageableCategory(Pageable pageable);
+    List<CategoryDto> getPageableCategory(Pageable pageable);
 
-    ResponseEntity<?> getCategoryById(Long categoryId);
+    CategoryDto getCategoryById(Long categoryId);
 
-    ResponseEntity<?> createRequest(Long userId, Long eventId);
+    ParticipationRequestDto createRequest(Long userId, Long eventId);
 
-    ResponseEntity<?> getRequestByUser(Long userId);
+    List<ParticipationRequestDto> getRequestByUser(Long userId);
 
-    ResponseEntity<?> removeRequest(Long requestId, Long userId);
+    ParticipationRequestDto removeRequest(Long requestId, Long userId);
 
-    ResponseEntity<?> getEvents(AdminFilterParam adminFilterParam);
+    List<EventFullDto> getEvents(AdminFilterParam adminFilterParam);
 
-    ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
+    EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto);
 
-    ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto);
+    CompilationDto createCompilation(NewCompilationDto newCompilationDto);
 
-    ResponseEntity<?> getCompilationById(Long compId);
+    CompilationDto getCompilationById(Long compId);
 
-    ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable);
+    List<CompilationDto> getPageableCompilation(Boolean pinned, Pageable pageable);
 
-    ResponseEntity<?> removeCompilation(Long id);
+    void removeCompilation(Long id);
 
-    ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request);
+    CompilationDto updateCompilation(Long compilationId, UpdateCompilationRequest request);
 
-    ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam);
+    List<EventShortDto> getEventsByPublic(PublicFilterParam filterParam, HttpServletRequest httpServletRequest);
 
-    ResponseEntity<?> getEventByIdPublic(Long eventId);
+    EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
 }

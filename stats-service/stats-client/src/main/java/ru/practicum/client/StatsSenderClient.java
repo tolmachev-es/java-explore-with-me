@@ -60,7 +60,7 @@ public class StatsSenderClient implements StatsClient {
         URI uri = builder.build(false).toUri();
         ViewStatsDto[] stats = restTemplate.getForObject(uri, ViewStatsDto[].class);
         if (stats != null) {
-            return new ArrayList<>(Arrays.asList(stats));
+            return Arrays.asList(stats);
         } else {
             return Collections.emptyList();
         }

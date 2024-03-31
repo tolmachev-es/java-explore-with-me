@@ -1,12 +1,14 @@
 package ru.practicum.server.repository.entities;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.practicum.server.enums.RequestStatusEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@EqualsAndHashCode
 @Entity
 @Table(schema = "PUBLIC", name = "REQUESTS")
 public class RequestEntity {

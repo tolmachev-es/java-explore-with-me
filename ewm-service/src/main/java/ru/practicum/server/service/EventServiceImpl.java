@@ -3,8 +3,6 @@ package ru.practicum.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatsClient;
 import ru.practicum.client.models.ViewStatsDto;
@@ -32,6 +30,7 @@ import ru.practicum.server.repository.*;
 import ru.practicum.server.repository.entities.RequestEntity;
 import ru.practicum.server.service.interfaces.EventService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -41,24 +40,23 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
-    private final CategoryDB categoryStorage;
-    private final EventDB eventStorage;
-    private final UserDB userStorage;
-    private final RequestDB requestStorage;
-    private final CompilationDB compilationStorage;
+    private final CategoryDao categoryStorage;
+    private final EventDao eventStorage;
+    private final UserDao userStorage;
+    private final RequestDao requestStorage;
+    private final CompilationDao compilationStorage;
     private final StatsClient statsClient;
 
     @Override
-    public ResponseEntity<?> getByUserId(Long userId, Pageable pageable) {
-        List<EventShortDto> eventShortDtosList = eventStorage.getEventByUserId(userId, pageable)
+    public List<EventShortDto> getByUserId(Long userId, Pageable pageable) {
+        return eventStorage.getEventByUserId(userId, pageable)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::toEventShortDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(eventShortDtosList, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> createNewEvent(NewEventDto newEventDto, Long userid) {
+    public EventFullDto createNewEvent(NewEventDto newEventDto, Long userid) {
         User user = userStorage.getUserById(userid);
         Event event = EventMapper.EVENT_MAPPER.fromNewEventDto(newEventDto);
         event.setCategory(categoryStorage.getCategoryById(newEventDto.getCategory()));
@@ -68,22 +66,20 @@ public class EventServiceImpl implements EventService {
             throw new IncorrectDateException("Должно содержать дату, которая еще не наступила");
         } else {
             Event createEvent = eventStorage.createEvent(event);
-            EventFullDto eventFullDto = EventMapper.EVENT_MAPPER.toEventFullDto(createEvent);
-            return new ResponseEntity<>(eventFullDto, HttpStatus.CREATED);
+            return EventMapper.EVENT_MAPPER.toEventFullDto(createEvent);
         }
     }
 
     @Override
-    public ResponseEntity<?> getByEventId(Long userId, Long eventId) {
+    public EventFullDto getByEventId(Long userId, Long eventId) {
         Event event = eventStorage.getEventByOwnerIdAndEventId(userId, eventId);
-        EventFullDto eventFullDto = EventMapper.EVENT_MAPPER.toEventFullDto(event);
-        return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
+        return EventMapper.EVENT_MAPPER.toEventFullDto(event);
     }
 
     @Override
-    public ResponseEntity<?> updateEvent(UpdateEventUserRequestDto updateEvent,
-                                         Long userId,
-                                         Long eventId) {
+    public EventFullDto updateEvent(UpdateEventUserRequestDto updateEvent,
+                                    Long userId,
+                                    Long eventId) {
         Event event = EventMapper.EVENT_MAPPER.fromUpdateEventRequest(updateEvent);
         if (updateEvent.getCategory() != null) {
             event.setCategory(categoryStorage.getCategoryById(updateEvent.getCategory()));
@@ -99,24 +95,22 @@ public class EventServiceImpl implements EventService {
                     break;
             }
         }
-        EventFullDto eventFullDto = EventMapper.EVENT_MAPPER.toEventFullDto(
+        return EventMapper.EVENT_MAPPER.toEventFullDto(
                 eventStorage.updateEventFromUser(event, userId, eventId, nextState));
-        return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getRequestByEvent(Long userId, Long eventId) {
-        List<ParticipationRequestDto> dtos = requestStorage.getRequestsByEvent(eventId)
+    public List<ParticipationRequestDto> getRequestByEvent(Long userId, Long eventId) {
+        return requestStorage.getRequestsByEvent(eventId)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> changeStatusForEventRequests(EventRequestStatusUpdateDto requestStatusUpdateDto,
-                                                          Long userId,
-                                                          Long eventId) {
+    public EventRequestStatusUpdateResult changeStatusForEventRequests(EventRequestStatusUpdateDto requestStatusUpdateDto,
+                                                                       Long userId,
+                                                                       Long eventId) {
         Event event = eventStorage.getById(eventId);
         List<RequestEntity> resultList = new ArrayList<>();
         if (!event.getOwner().getId().equals(userId)) {
@@ -148,46 +142,41 @@ public class EventServiceImpl implements EventService {
                 eventRequestStatusUpdateRequest.getRejectedRequests().add(requestDto);
             }
         }
-        return new ResponseEntity<>(eventRequestStatusUpdateRequest, HttpStatus.OK);
+        return eventRequestStatusUpdateRequest;
     }
 
     @Override
-    public ResponseEntity<?> createCategory(NewCategoryDto newCategoryDto) {
+    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
         Category category = EventMapper.EVENT_MAPPER.fromNewCategoryDto(newCategoryDto);
-        CategoryDto categoryDto = EventMapper.EVENT_MAPPER.toCategoryDto(categoryStorage.createCategory(category));
-        return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
+        return EventMapper.EVENT_MAPPER.toCategoryDto(categoryStorage.createCategory(category));
     }
 
     @Override
-    public ResponseEntity<?> removeCategory(Long categoryId) {
+    public void removeCategory(Long categoryId) {
         categoryStorage.deleteCategory(categoryId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<?> updateCategory(CategoryDto categoryDto, Long categoryId) {
-        CategoryDto category = EventMapper.EVENT_MAPPER.toCategoryDto(
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
+        return EventMapper.EVENT_MAPPER.toCategoryDto(
                 categoryStorage.updateCategory(categoryDto, categoryId));
-        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getPageableCategory(Pageable pageable) {
-        List<CategoryDto> categoryDtos = categoryStorage.getPageableCategory(pageable)
+    public List<CategoryDto> getPageableCategory(Pageable pageable) {
+        return categoryStorage.getPageableCategory(pageable)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::toCategoryDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(categoryDtos, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getCategoryById(Long categoryId) {
-        CategoryDto categoryDto = EventMapper.EVENT_MAPPER.toCategoryDto(categoryStorage.getCategoryById(categoryId));
-        return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+    public CategoryDto getCategoryById(Long categoryId) {
+        return EventMapper.EVENT_MAPPER.toCategoryDto(categoryStorage.getCategoryById(categoryId));
     }
 
     @Override
-    public ResponseEntity<?> createRequest(Long userId, Long eventId) {
+    public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         RequestEntity request = new RequestEntity();
         request.setCreated(LocalDateTime.now());
         User user = userStorage.getUserById(userId);
@@ -208,38 +197,32 @@ public class EventServiceImpl implements EventService {
         } else {
             request.setConfirmed(RequestStatusEnum.PENDING);
         }
-        ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER.fromRequestEntity(
-                requestStorage.createNewRequest(request));
-        return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
+        return EventMapper.EVENT_MAPPER.fromRequestEntity(requestStorage.createNewRequest(request));
     }
 
     @Override
-    public ResponseEntity<?> getRequestByUser(Long userId) {
-        List<ParticipationRequestDto> dtos = requestStorage.getByUserId(userId)
+    public List<ParticipationRequestDto> getRequestByUser(Long userId) {
+        return requestStorage.getByUserId(userId)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::fromRequestEntity)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> removeRequest(Long requestId, Long userId) {
-        ParticipationRequestDto requestDto = EventMapper.EVENT_MAPPER
-                .fromRequestEntity(requestStorage.removeRequest(requestId, userId));
-        return new ResponseEntity<>(requestDto, HttpStatus.OK);
+    public ParticipationRequestDto removeRequest(Long requestId, Long userId) {
+        return EventMapper.EVENT_MAPPER.fromRequestEntity(requestStorage.removeRequest(requestId, userId));
     }
 
     @Override
-    public ResponseEntity<?> getEvents(AdminFilterParam adminFilterParam) {
+    public List<EventFullDto> getEvents(AdminFilterParam adminFilterParam) {
         List<Event> events = eventStorage.getEventsByFilter(adminFilterParam);
-        List<EventFullDto> eventFullDtos = events.stream()
+        return events.stream()
                 .map(EventMapper.EVENT_MAPPER::toEventFullDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(eventFullDtos, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto) {
+    public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequestDto requestDto) {
         Event event = EventMapper.EVENT_MAPPER.fromUpdateAdminEventRequest(requestDto);
         if (requestDto.getCategory() != null) {
             event.setCategory(categoryStorage.getCategoryById(requestDto.getCategory()));
@@ -255,61 +238,56 @@ public class EventServiceImpl implements EventService {
                     break;
             }
         }
-        EventFullDto updateEvent = EventMapper.EVENT_MAPPER.toEventFullDto(
-                eventStorage.updateEventFromAdmin(event, eventId, nextState));
-        return new ResponseEntity<>(updateEvent, HttpStatus.OK);
+        return EventMapper.EVENT_MAPPER.toEventFullDto(eventStorage.updateEventFromAdmin(event, eventId, nextState));
     }
 
     @Override
-    public ResponseEntity<?> createCompilation(NewCompilationDto newCompilationDto) {
-        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
-                compilationStorage.createCompilation(newCompilationDto));
-        return new ResponseEntity<>(compilationDto, HttpStatus.CREATED);
+    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
+        return EventMapper.EVENT_MAPPER.fromCompilationEntity(compilationStorage.createCompilation(newCompilationDto));
     }
 
     @Override
-    public ResponseEntity<?> getCompilationById(Long compId) {
-        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
-                compilationStorage.getCompilationById(compId));
-        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
+    public CompilationDto getCompilationById(Long compId) {
+        return EventMapper.EVENT_MAPPER.fromCompilationEntity(compilationStorage.getCompilationById(compId));
     }
 
     @Override
-    public ResponseEntity<?> getPageableCompilation(Boolean pinned, Pageable pageable) {
-        List<CompilationDto> compilationDto = compilationStorage.getPageableCompilations(pinned, pageable)
+    public List<CompilationDto> getPageableCompilation(Boolean pinned, Pageable pageable) {
+        return compilationStorage.getPageableCompilations(pinned, pageable)
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::fromCompilationEntity)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> removeCompilation(Long id) {
+    public void removeCompilation(Long id) {
         compilationStorage.removeById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<?> updateCompilation(Long compilationId, UpdateCompilationRequest request) {
-        CompilationDto compilationDto = EventMapper.EVENT_MAPPER.fromCompilationEntity(
+    public CompilationDto updateCompilation(Long compilationId, UpdateCompilationRequest request) {
+        return EventMapper.EVENT_MAPPER.fromCompilationEntity(
                 compilationStorage.updateCompilation(request, compilationId));
-        return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getEventsByPublic(PublicFilterParam filterParam) {
-        List<EventShortDto> events = addStatistic(eventStorage.getEventsByPublicFilter(filterParam))
+    public List<EventShortDto> getEventsByPublic(PublicFilterParam filterParam, HttpServletRequest httpServletRequest) {
+        statsClient.addNewHit("main-service", httpServletRequest);
+        return addStatistic(eventStorage.getEventsByPublicFilter(filterParam))
                 .stream()
                 .map(EventMapper.EVENT_MAPPER::toEventShortDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> getEventByIdPublic(Long eventId) {
-        Event event = addStatistic(List.of(eventStorage.getEventByIdAndStatusPublished(eventId)))
-                .get(0);
-        return new ResponseEntity<>(EventMapper.EVENT_MAPPER.toEventFullDto(event), HttpStatus.OK);
+    public EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest) {
+        statsClient.addNewHit("main-service", httpServletRequest);
+        List<Event> events = addStatistic(List.of(eventStorage.getEventByIdAndStatusPublished(eventId)));
+        if (events.size() == 1) {
+            return EventMapper.EVENT_MAPPER.toEventFullDto(events.get(0));
+        } else {
+            throw new IncorrectRequestException("Something went wrong");
+        }
     }
 
     private List<Event> addStatistic(List<Event> events) {

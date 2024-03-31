@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.server.dto.userDtos.NewUserRequestDao;
+import ru.practicum.server.dto.userDtos.UserDto;
 import ru.practicum.server.service.interfaces.UserService;
 
 import javax.validation.Valid;
@@ -24,23 +26,24 @@ public class AdminUsersController {
     private final UserService userService;
 
     @PostMapping
-    ResponseEntity<?> createUser(@Valid @RequestBody NewUserRequestDao newUser) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody NewUserRequestDao newUser) {
         log.info("Has new request to create user with name {} and email {}", newUser.getName(), newUser.getEmail());
-        return userService.createNewUser(newUser);
+        return new ResponseEntity<>(userService.createNewUser(newUser), HttpStatus.CREATED);
     }
 
     @GetMapping
-    ResponseEntity<?> getUsers(@Nullable @RequestParam(name = "ids", defaultValue = "") List<Long> ids,
-                               @RequestParam(name = "from", defaultValue = "0") Integer from,
-                               @RequestParam(name = "size", defaultValue = "10") Integer size) {
+    public ResponseEntity<List<UserDto>> getUsers(@Nullable @RequestParam(name = "ids", defaultValue = "") List<Long> ids,
+                                                  @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                  @RequestParam(name = "size", defaultValue = "10") Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         log.info("Has new request to get user with id {}", ids);
-        return userService.getUsers(ids, pageable);
+        return new ResponseEntity<>(userService.getUsers(ids, pageable), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> removeUser(@NotNull @PathVariable long id) {
+    public ResponseEntity<Object> removeUser(@NotNull @PathVariable long id) {
         log.info("Has new request to remove user with id {}", id);
-        return userService.removeUserById(id);
+        userService.removeUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

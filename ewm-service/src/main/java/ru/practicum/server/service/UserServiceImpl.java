@@ -2,14 +2,12 @@ package ru.practicum.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.server.dto.userDtos.NewUserRequestDao;
 import ru.practicum.server.dto.userDtos.UserDto;
 import ru.practicum.server.mappers.UserMapper;
 import ru.practicum.server.models.User;
-import ru.practicum.server.repository.UserDB;
+import ru.practicum.server.repository.UserDao;
 import ru.practicum.server.service.interfaces.UserService;
 
 import java.util.List;
@@ -18,27 +16,24 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserDB userStorage;
+    private final UserDao userStorage;
 
     @Override
-    public ResponseEntity<?> createNewUser(NewUserRequestDao user) {
+    public UserDto createNewUser(NewUserRequestDao user) {
         User newUser = UserMapper.USER_MAPPER.fromNewUserRequestDao(user);
-        return new ResponseEntity<>(UserMapper.USER_MAPPER.toUserDto(
-                userStorage.createNewUser(newUser)), HttpStatus.CREATED);
+        return UserMapper.USER_MAPPER.toUserDto(userStorage.createNewUser(newUser));
     }
 
     @Override
-    public ResponseEntity<?> getUsers(List<Long> userIds, Pageable pageable) {
-        List<UserDto> userDtoList = userStorage.getUsers(userIds, pageable)
+    public List<UserDto> getUsers(List<Long> userIds, Pageable pageable) {
+        return userStorage.getUsers(userIds, pageable)
                 .stream()
                 .map(UserMapper.USER_MAPPER::toUserDto)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(userDtoList, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> removeUserById(long userId) {
+    public void removeUserById(long userId) {
         userStorage.removeUserById(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
