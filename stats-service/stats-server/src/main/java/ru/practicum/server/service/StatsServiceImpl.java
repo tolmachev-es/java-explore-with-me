@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.models.HitDto;
 import ru.practicum.client.models.ViewStatsDto;
+import ru.practicum.server.exceptions.StatisticBadRequestException;
 import ru.practicum.server.mappers.StatMapper;
 import ru.practicum.server.repository.HitEntity;
 import ru.practicum.server.repository.StatRepository;
@@ -21,22 +22,24 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public void addStatistic(HitDto hitDto) {
         HitEntity hitEntity = StatMapper.STAT_MAPPER.hitToEntity(hitDto);
-        statRepository.save(hitEntity);
+        try {
+            statRepository.save(hitEntity);
+        } catch (Exception e) {
+            throw new StatisticBadRequestException("Произошла ошибка при добавлении статистики");
+        }
     }
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        return statRepository.findAllStatistic(start, end, uris)
-                .stream()
-                .map(StatMapper.STAT_MAPPER::fromProjections)
-                .map(v -> StatMapper.STAT_MAPPER.viewToDto(v, unique))
-                .sorted(new Comparator<ViewStatsDto>() {
-                    @Override
-                    public int compare(ViewStatsDto o1, ViewStatsDto o2) {
-                        return o2.getHits() - o1.getHits();
-                    }
-                })
-                .collect(Collectors.toList());
-
+        if (end.isBefore(start)) {
+            throw new StatisticBadRequestException("Дата начала позже даты окончания");
+        } else {
+            return statRepository.findAllStatistic(start, end, uris)
+                    .stream()
+                    .map(StatMapper.STAT_MAPPER::fromProjections)
+                    .map(v -> StatMapper.STAT_MAPPER.viewToDto(v, unique))
+                    .sorted(Comparator.comparing(ViewStatsDto::getHits).reversed())
+                    .collect(Collectors.toList());
+        }
     }
 }
