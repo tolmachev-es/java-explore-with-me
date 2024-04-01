@@ -30,7 +30,7 @@ public class AdminCompilationController {
     }
 
     @DeleteMapping("/{compId}")
-    public ResponseEntity<Object> removeCompilation(@PositiveOrZero @PathVariable(name = "compId") Long compId) {
+    public ResponseEntity<Void> removeCompilation(@PositiveOrZero @PathVariable(name = "compId") Long compId) {
         log.info("Has new request to remove compilation with id {}", compId);
         eventService.removeCompilation(compId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -23,7 +23,7 @@ public class StatsController {
     private final StatsService service;
 
     @PostMapping("/hit")
-    ResponseEntity<Object> addStatistic(@RequestBody HitDto hitDto) {
+    ResponseEntity<Void> addStatistic(@RequestBody HitDto hitDto) {
         service.addStatistic(hitDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

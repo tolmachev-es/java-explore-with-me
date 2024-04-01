@@ -41,7 +41,7 @@ public class AdminUsersController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> removeUser(@NotNull @PathVariable long id) {
+    public ResponseEntity<Void> removeUser(@NotNull @PathVariable long id) {
         log.info("Has new request to remove user with id {}", id);
         userService.removeUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
