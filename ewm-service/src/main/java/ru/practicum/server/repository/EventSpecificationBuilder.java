@@ -3,6 +3,7 @@ package ru.practicum.server.repository;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.server.enums.StateEnum;
 import ru.practicum.server.models.AdminFilterParam;
+import ru.practicum.server.models.CuratorFilterParam;
 import ru.practicum.server.models.PublicFilterParam;
 import ru.practicum.server.repository.entities.EventEntity;
 import ru.practicum.server.repository.entities.RequestEntity;
@@ -14,6 +15,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventSpecificationBuilder {
+
+    public static Specification<EventEntity> getEventSpecificationByCuratorFilterParam(CuratorFilterParam filterParam) {
+        return Specification.where(ownerSpecification(filterParam.getCuratorId()))
+                .and(getActual(filterParam.getIsActual()))
+                .and(statesSpecification(List.of(StateEnum.PUBLISHED)));
+    }
 
     public static Specification<EventEntity> getEventSpecificationByPublicFilterParam(PublicFilterParam filterParam) {
         return Specification.where(textSpecification(filterParam.getText()))
@@ -32,6 +39,14 @@ public class EventSpecificationBuilder {
                 .and(statesSpecification(filterParam.getStates()))
                 .and(startSpecification(filterParam.getRangeStart()))
                 .and(endSpecification(filterParam.getRangeEnd()));
+    }
+
+    public static Specification<EventEntity> getActual(Boolean isActual) {
+        if (!isActual) {
+            return null;
+        } else {
+            return endSpecification(LocalDateTime.now());
+        }
     }
 
     public static Specification<EventEntity> ownerSpecification(List<Long> users) {
@@ -93,8 +108,8 @@ public class EventSpecificationBuilder {
         return (root, query, criteriaBuilder) -> {
             Subquery<Long> subquery = query.subquery(Long.class);
             Root<RequestEntity> subRoot = subquery.from(RequestEntity.class);
-            Predicate joinCondition = criteriaBuilder.equal(root.get("ID"), subRoot.get("EVENT_ID"));
-            Predicate whereCondition = criteriaBuilder.equal(subRoot.get("CONFIRMED"), true);
+            Predicate joinCondition = criteriaBuilder.equal(root.get("id"), subRoot.get("eventId"));
+            Predicate whereCondition = criteriaBuilder.equal(subRoot.get("confirmed"), true);
             subquery.where(whereCondition, joinCondition);
             Predicate mainQueryCondition = criteriaBuilder.exists(subquery);
             query.where(mainQueryCondition);

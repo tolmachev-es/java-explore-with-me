@@ -290,32 +290,55 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private List<Event> addStatistic(List<Event> events) {
-        Pattern pattern = Pattern.compile("/events/(\\d+)$");
-
-        List<String> newUris = events.stream()
-                .map(s -> String.format("/events/%s", s.getId()))
+    @Override
+    public List<EventShortDto> getFriendEvents(Long userId, Long friendId, Pageable pageable) {
+        userStorage.getFriendship(userId, friendId);
+        List<Event> events = addStatistic(eventStorage.getFriendEvents(friendId, pageable));
+        return events.stream()
+                .map(EventMapper.EVENT_MAPPER::toEventShortDto)
                 .collect(Collectors.toList());
-        LocalDateTime startTime = events.stream().min(new Comparator<Event>() {
-            @Override
-            public int compare(Event o1, Event o2) {
-                return o1.getCreatedOn().compareTo(o2.getCreatedOn());
-            }
-        }).get().getCreatedOn();
+    }
 
-        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startTime, LocalDateTime.now(), newUris, true);
-        Map<Long, Integer> statistic = new HashMap<>();
-        for (ViewStatsDto viewStatsDto : viewStatsDtos) {
-            Matcher matcher = pattern.matcher(viewStatsDto.getUri());
-            if (matcher.find()) {
-                String id = matcher.group(1);
-                statistic.put(Long.parseLong(id), viewStatsDto.getHits());
-            }
+    @Override
+    public List<EventShortDto> getEventsByCurator(Long userId, CuratorFilterParam filterParam) {
+        filterParam.setCuratorId(userStorage.getCurator(userId, filterParam.getCuratorId()));
+        List<Event> events = addStatistic(eventStorage.getAllByCuratorFilter(filterParam));
+        return events.stream()
+                .map(EventMapper.EVENT_MAPPER::toEventShortDto)
+                .collect(Collectors.toList());
+    }
 
+    private List<Event> addStatistic(List<Event> events) {
+        if (events.size() == 0) {
+            return events;
+        } else {
+            Pattern pattern = Pattern.compile("/events/(\\d+)$");
+
+            List<String> newUris = events.stream()
+                    .map(s -> String.format("/events/%s", s.getId()))
+                    .collect(Collectors.toList());
+            LocalDateTime startTime = events.stream().min(new Comparator<Event>() {
+                @Override
+                public int compare(Event o1, Event o2) {
+                    return o1.getCreatedOn().compareTo(o2.getCreatedOn());
+                }
+            }).get().getCreatedOn();
+
+            List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startTime, LocalDateTime.now(), newUris, true);
+            Map<Long, Integer> statistic = new HashMap<>();
+            for (ViewStatsDto viewStatsDto : viewStatsDtos) {
+                Matcher matcher = pattern.matcher(viewStatsDto.getUri());
+                if (matcher.find()) {
+                    String id = matcher.group(1);
+                    statistic.put(Long.parseLong(id), viewStatsDto.getHits());
+                }
+
+            }
+            for (Event event : events) {
+                event.setViews(statistic.get(event.getId()));
+            }
+            return events;
         }
-        for (Event event : events) {
-            event.setViews(statistic.get(event.getId()));
-        }
-        return events;
+
     }
 }
