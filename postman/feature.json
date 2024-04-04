@@ -985,8 +985,8 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"friendId\")));\r",
-							"    pm.expect(target[1].id).to.be.eql(parseInt(pm.collectionVariables.get(\"userId3\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"friendId\").toString());\r",
+							"    pm.expect(target[1].id.toString()).to.be.eql(pm.collectionVariables.get(\"userId3\").toString());\r",
 							"});\r",
 							""
 						],
@@ -1090,7 +1090,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"userId\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"userId\").toString());\r",
 							"});\r",
 							""
 						],
@@ -1195,7 +1195,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"userId\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"userId\").toString());\r",
 							"});\r",
 							""
 						],
@@ -1292,7 +1292,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"eventId\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"eventId\").toString());\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -1702,8 +1702,8 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"friendId\")));\r",
-							"    pm.expect(target[1].id).to.be.eql(pm.collectionVariables.get(\"userId3\"));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"friendId\").toString());\r",
+							"    pm.expect(target[1].id.toString()).to.be.eql(pm.collectionVariables.get(\"userId3\").toString());\r",
 							"});\r",
 							""
 						],
@@ -1795,7 +1795,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"friendId\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"friendId\").toString());\r",
 							"});\r",
 							""
 						],
@@ -1901,7 +1901,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"eventId\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"eventId\").toString());\r",
 							"});\r",
 							""
 						],
@@ -2014,8 +2014,8 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Должны быть запросы для данных пользователей\", function() {\r",
-							"    pm.expect(target[0].id).to.be.eql(parseInt(pm.collectionVariables.get(\"eventId\")));\r",
-							"    pm.expect(target[1].id).to.be.eql(parseInt(pm.collectionVariables.get(\"eventId2\")));\r",
+							"    pm.expect(target[0].id.toString()).to.be.eql(pm.collectionVariables.get(\"eventId\").toString());\r",
+							"    pm.expect(target[1].id.toString()).to.be.eql(pm.collectionVariables.get(\"eventId2\").toString());\r",
 							"});\r",
 							""
 						],
