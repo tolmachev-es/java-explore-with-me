@@ -16,6 +16,7 @@ import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateResult;
 import ru.practicum.server.dto.requestDtos.ParticipationRequestDto;
 import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
 import ru.practicum.server.models.AdminFilterParam;
+import ru.practicum.server.models.CuratorFilterParam;
 import ru.practicum.server.models.PublicFilterParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,4 +69,8 @@ public interface EventService {
     List<EventShortDto> getEventsByPublic(PublicFilterParam filterParam, HttpServletRequest httpServletRequest);
 
     EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
+
+    List<EventShortDto> getFriendEvents(Long userId, Long friendId, Pageable pageable);
+
+    List<EventShortDto> getEventsByCurator(Long userId, CuratorFilterParam filterParam);
 }

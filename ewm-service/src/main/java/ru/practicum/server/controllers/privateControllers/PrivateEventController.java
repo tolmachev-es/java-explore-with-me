@@ -16,9 +16,11 @@ import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateDto;
 import ru.practicum.server.dto.requestDtos.EventRequestStatusUpdateResult;
 import ru.practicum.server.dto.requestDtos.ParticipationRequestDto;
 import ru.practicum.server.dto.requestDtos.UpdateEventUserRequestDto;
+import ru.practicum.server.models.CuratorFilterParam;
 import ru.practicum.server.service.interfaces.EventService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -76,4 +78,33 @@ public class PrivateEventController {
         log.info("Has new request to update request status for event with id {}", eventId);
         return new ResponseEntity<>(eventService.changeStatusForEventRequests(eventRequestStatusUpdateDto, userId, eventId), HttpStatus.OK);
     }
+
+    @GetMapping("/events/{userId}/friend/{friendId}")
+    public ResponseEntity<List<EventShortDto>> getFriends(@NotNull @PathVariable(name = "userId") Long userId,
+                                                          @NotNull @PathVariable(name = "friendId") Long friendId,
+                                                          @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                          @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        log.info("Has new request to get friends event");
+        return new ResponseEntity<>(eventService.getFriendEvents(userId, friendId, PageRequest.of(from / size, size)),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/events/{userId}/subscription")
+    public ResponseEntity<List<EventShortDto>> getEvent(@NotNull @PathVariable(name = "userId") Long userId,
+                                                        @RequestParam(name = "curators", required = false) List<Long> curators,
+                                                        @RequestParam(name = "sort", required = false) CuratorFilterParam.SortMethod sort,
+                                                        @RequestParam(name = "actual", defaultValue = "false") Boolean actual,
+                                                        @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                        @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        CuratorFilterParam filterParam = CuratorFilterParam.builder()
+                .curatorId(curators)
+                .sort(sort)
+                .isActual(actual)
+                .from(from)
+                .size(size)
+                .build();
+        log.info("Has new search curators events");
+        return new ResponseEntity<>(eventService.getEventsByCurator(userId, filterParam), HttpStatus.OK);
+    }
+
 }
